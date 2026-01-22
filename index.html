@@ -6,64 +6,56 @@
   <title>Unidad 3 · Comunicación telefónica (FP GS)</title>
   <link rel="stylesheet" href="css/styles.css" />
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link rel="icon" href="data:,">
 </head>
 <body>
   <header class="header">
     <div class="container">
       <h1>Unidad 3 · Comunicación telefónica</h1>
-      <p class="subtitle">FP Grado Superior · Administración y Finanzas · Comunicación y Atención al Cliente</p>
-      <div class="topbar">
-        <div class="student">
-          <label for="studentName">Nombre del alumno/a</label>
-          <input id="studentName" type="text" placeholder="Escribe tu nombre completo" />
-        </div>
-        <div class="status">
-          <div class="badge" id="phase1Badge">FASE 1: pendiente</div>
-          <div class="badge muted" id="phase2Badge">FASE 2: bloqueada</div>
-        </div>
+      <p>FP Grado Superior · Administración y Finanzas · Comunicación y Atención al Cliente</p>
+
+      <div style="margin:10px 0;">
+        <label for="studentName">Nombre del alumno/a</label>
+        <input id="studentName" type="text" placeholder="Escribe tu nombre completo" />
+      </div>
+
+      <p id="phase1Badge">FASE 1: pendiente</p>
+      <p id="phase2Badge">FASE 2: bloqueada</p>
+
+      <div style="margin-top:12px;">
+        <button class="tab" data-view="home">Inicio</button>
+        <button class="tab" data-view="phase1">Fase 1</button>
+        <button class="tab" data-view="phase2" id="phase2Tab" disabled>Fase 2</button>
+        <button class="tab" data-view="certificate" id="certTab" disabled>Certificado</button>
       </div>
     </div>
   </header>
 
-  <main class="container main">
-    <nav class="tabs">
-      <button class="tab active" data-view="home">Inicio</button>
-      <button class="tab" data-view="phase1">Fase 1</button>
-      <button class="tab" data-view="phase2" id="phase2Tab" disabled>Fase 2</button>
-      <button class="tab" data-view="certificate" id="certTab" disabled>Certificado</button>
-    </nav>
-
-    <section class="panel" id="view-home">
-      <div class="card">
-        <h2>Cómo funciona</h2>
-        <p>Completa ambas fases con al menos un 80% para descargar el certificado.</p>
-        <button class="primary" id="startPhase1Btn">Empezar Fase 1</button>
-      </div>
+  <main class="container">
+    <section id="view-home">
+      <h2>Cómo funciona</h2>
+      <p>Completa ambas fases con al menos un 80% para descargar el certificado.</p>
+      <button id="startPhase1Btn">Empezar Fase 1</button>
     </section>
 
-    <section class="panel hidden" id="view-phase1">
-      <div class="card">
-        <h2>FASE 1</h2>
-        <div id="p1Quiz"></div>
-        <button class="primary" id="p1SubmitQuiz">Corregir</button>
-        <div id="p1QuizResult"></div>
-      </div>
+    <section id="view-phase1" class="hidden">
+      <h2>FASE 1</h2>
+      <div id="p1Quiz"></div>
+      <button id="p1SubmitQuiz">Corregir</button>
+      <div id="p1QuizResult"></div>
     </section>
 
-    <section class="panel hidden" id="view-phase2">
-      <div class="card">
-        <h2>FASE 2</h2>
-        <div id="p2Quiz"></div>
-        <button class="primary" id="p2SubmitQuiz">Corregir</button>
-        <div id="p2QuizResult"></div>
-      </div>
+    <section id="view-phase2" class="hidden">
+      <h2>FASE 2</h2>
+      <div id="p2Quiz"></div>
+      <button id="p2SubmitQuiz">Corregir</button>
+      <div id="p2QuizResult"></div>
     </section>
 
-    <section class="panel hidden" id="view-certificate">
-      <div class="card">
-        <h2>Certificado</h2>
-        <button class="primary" id="downloadCertBtn">Descargar PDF</button>
-      </div>
+    <section id="view-certificate" class="hidden">
+      <h2>Certificado</h2>
+      <p>El certificado incluye: nombre, unidad, resultado (%) y fecha.</p>
+      <button id="downloadCertBtn">Descargar PDF</button>
     </section>
   </main>
 
