@@ -1,1 +1,140 @@
 https://raw.githubusercontent.com/tamaramilgar-tech/comunicacion-telefonica/main/index.html
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Unidad 3 · Comunicación telefónica (FP GS)</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+  <link rel="icon" href="data:,">
+</head>
+<body>
+  <header class="header">
+    <div class="container">
+      <h1>Unidad 3 · Comunicación telefónica</h1>
+      <p>FP Grado Superior · Administración y Finanzas · Comunicación y Atención al Cliente</p>
+
+      <div style="margin:10px 0;">
+        <label for="studentName">Nombre del alumno/a</label>
+        <input id="studentName" type="text" placeholder="Escribe tu nombre completo" />
+      </div>
+
+      <p id="phase1Badge">FASE 1: pendiente</p>
+      <p id="phase2Badge">FASE 2: bloqueada</p>
+      <p id="phase3Badge">FASE 3: bloqueada</p>
+      <p id="phase4Badge">FASE 4: bloqueada</p>
+
+      <div style="margin-top:12px;">
+        <button class="tab" data-view="home">Inicio</button>
+        <button class="tab" data-view="phase1">Fase 1</button>
+        <button class="tab" data-view="phase2" id="phase2Tab" disabled>Fase 2</button>
+        <button class="tab" data-view="phase3" id="phase3Tab" disabled>Fase 3</button>
+        <button class="tab" data-view="phase4" id="phase4Tab" disabled>Fase 4</button>
+        <button class="tab" data-view="certificate" id="certTab" disabled>Certificado</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="view-home">
+      <h2>Cómo funciona</h2>
+      <p>Completa todas las fases con al menos un 80% y con verificación del docente para descargar el certificado.</p>
+      <ol>
+        <li>Realiza la práctica (entrega obligatoria en EVAGD).</li>
+        <li>El docente verifica y te da un código para desbloquear el test de la fase.</li>
+        <li>Aprueba el test (mínimo 80%).</li>
+      </ol>
+      <button id="startPhase1Btn">Empezar Fase 1</button>
+    </section>
+
+    <section id="view-phase1" class="hidden">
+      <h2>FASE 1 · Conceptos y protocolo</h2>
+      <p>Lee el contenido teórico (según indique el docente) y realiza el test.</p>
+
+      <div id="p1Quiz"></div>
+      <button id="p1SubmitQuiz">Corregir</button>
+      <div id="p1QuizResult"></div>
+    </section>
+
+    <section id="view-phase2" class="hidden">
+      <h2>FASE 2 · Práctica de audio: atención telefónica</h2>
+      <p><strong>Entrega obligatoria en EVAGD:</strong> audio 1–2 minutos representando una situación comercial de atención telefónica.</p>
+
+      <div class="teacher-gate">
+        <h3>Verificación del docente (obligatoria)</h3>
+        <p>
+          Sube tu audio en EVAGD. Cuando el docente verifique la entrega, te facilitará un código para desbloquear el test.
+        </p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="p2CodeInput" type="text" maxlength="6" placeholder="Código (6 caracteres)">
+          <button id="p2VerifyBtn">Validar</button>
+        </div>
+        <p id="p2GateMsg" class="msg"></p>
+      </div>
+
+      <div id="p2Quiz"></div>
+      <button id="p2SubmitQuiz" disabled>Corregir</button>
+      <div id="p2QuizResult"></div>
+      <p id="p2TestLockMsg" class="msg"></p>
+    </section>
+
+    <section id="view-phase3" class="hidden">
+      <h2>FASE 3 · Práctica escrita: nota de llamada</h2>
+      <p><strong>Entrega obligatoria en EVAGD:</strong> redacta una nota de llamada (fecha/hora, quién llama, motivo, mensaje, urgencia, devolución).</p>
+
+      <div class="teacher-gate">
+        <h3>Verificación del docente (obligatoria)</h3>
+        <p>
+          Sube tu nota en EVAGD. Cuando el docente verifique la entrega, te facilitará un código para desbloquear el test.
+        </p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="p3CodeInput" type="text" maxlength="6" placeholder="Código (6 caracteres)">
+          <button id="p3VerifyBtn">Validar</button>
+        </div>
+        <p id="p3GateMsg" class="msg"></p>
+      </div>
+
+      <div id="p3Quiz"></div>
+      <button id="p3SubmitQuiz" disabled>Corregir</button>
+      <div id="p3QuizResult"></div>
+      <p id="p3TestLockMsg" class="msg"></p>
+    </section>
+
+    <section id="view-phase4" class="hidden">
+      <h2>FASE 4 · Práctica telemática: correo + mensaje interno</h2>
+      <p><strong>Entrega obligatoria en EVAGD:</strong> redacta un correo profesional + un mensaje interno (chat corporativo/CRM).</p>
+
+      <div class="teacher-gate">
+        <h3>Verificación del docente (obligatoria)</h3>
+        <p>
+          Sube tus evidencias en EVAGD. Cuando el docente verifique la entrega, te facilitará un código para desbloquear el test.
+        </p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="p4CodeInput" type="text" maxlength="6" placeholder="Código (6 caracteres)">
+          <button id="p4VerifyBtn">Validar</button>
+        </div>
+        <p id="p4GateMsg" class="msg"></p>
+      </div>
+
+      <div id="p4Quiz"></div>
+      <button id="p4SubmitQuiz" disabled>Corregir</button>
+      <div id="p4QuizResult"></div>
+      <p id="p4TestLockMsg" class="msg"></p>
+    </section>
+
+    <section id="view-certificate" class="hidden">
+      <h2>Certificado</h2>
+      <p>El certificado incluye: nombre, unidad, resultado (%) y fecha.</p>
+      <p><strong>Requisito:</strong> fases completadas + verificación docente + nota mínima.</p>
+      <button id="downloadCertBtn">Descargar PDF</button>
+    </section>
+  </main>
+
+  <script src="js/data.js"></script>
+  <script src="js/teacher-gate.js"></script>
+  <script src="js/certificate.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
