@@ -102,6 +102,38 @@
       showView("certificate");
     });
   }
+  // ========= PARCHE "CORREGIR" (SIN TOCAR HTML) =========
+  document.querySelectorAll("button").forEach(btn => {
+    if ((btn.textContent || "").trim().toLowerCase() !== "corregir") return;
+
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+
+      const current =
+        !views.phase1?.classList.contains("hidden") ? "phase1" :
+        !views.phase2?.classList.contains("hidden") ? "phase2" :
+        !views.phase3?.classList.contains("hidden") ? "phase3" :
+        !views.phase4?.classList.contains("hidden") ? "phase4" :
+        null;
+
+      if (!current) return;
+
+      const flow = {
+        phase1: "phase2",
+        phase2: "phase3",
+        phase3: "phase4",
+        phase4: "certificate",
+      };
+
+      const next = flow[current];
+      if (!next) return;
+
+      state.unlocked[next] = true;
+      save();
+      refreshUI();
+      showView(next);
+    });
+  });
 
   // ========= Arranque =========
   refreshUI();
