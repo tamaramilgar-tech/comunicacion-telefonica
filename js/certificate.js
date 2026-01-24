@@ -1,7 +1,7 @@
 // js/certificate.js
 function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, resultP3, resultP4 }) {
   if (!window.jspdf || typeof window.jspdf.jsPDF !== "function") {
-    alert("No se pudo generar el PDF: no se cargó la librería jsPDF. Revisa tu conexión o el script de jsPDF en index.html.");
+    alert("No se pudo generar el PDF: no se cargó la librería jsPDF.");
     return;
   }
 
@@ -11,11 +11,8 @@ function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, res
   const d = new Date();
   const dateStr = `${String(d.getDate()).padStart(2, "0")}/${String(d.getMonth() + 1).padStart(2, "0")}/${d.getFullYear()}`;
 
-  // Helpers
   const safe = (v) => (v === null || v === undefined || Number.isNaN(v)) ? "-" : String(v);
-  const scoreLine = (label, value, y) => doc.text(`${label}: ${safe(value)}%`, 20, y);
 
-  // Título centrado
   doc.setFontSize(18);
   doc.text("CERTIFICADO DE APROVECHAMIENTO", doc.internal.pageSize.getWidth() / 2, 25, { align: "center" });
 
@@ -23,18 +20,17 @@ function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, res
   doc.text(`Nombre del alumno/a: ${studentName}`, 20, 55);
   doc.text(`Unidad: ${unitName}`, 20, 75);
 
-  scoreLine("Resultado FASE 1", resultP1, 95);
-  scoreLine("Resultado FASE 2", resultP2, 110);
-  scoreLine("Resultado FASE 3", resultP3, 125);
-  scoreLine("Resultado FASE 4", resultP4, 140);
+  doc.text(`Resultado FASE 1: ${safe(resultP1)}%`, 20, 95);
+  doc.text(`Resultado FASE 2: ${safe(resultP2)}%`, 20, 110);
+  doc.text(`Resultado FASE 3: ${safe(resultP3)}%`, 20, 125);
+  doc.text(`Resultado FASE 4: ${safe(resultP4)}%`, 20, 140);
 
   doc.text(`Fecha: ${dateStr}`, 20, 160);
   doc.text("(Superado con éxito — mínimo 80%)", 20, 185);
 
-  // Nombre de archivo seguro: quita acentos/símbolos raros
   const fileSafeName = String(studentName || "Alumno")
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // quita tildes
-    .replace(/[^\w\s-]/g, "")                          // quita símbolos raros
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^\w\s-]/g, "")
     .trim()
     .replace(/\s+/g, "_");
 
