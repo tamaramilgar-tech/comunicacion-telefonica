@@ -1,4 +1,5 @@
-function generateCertificatePDF({ studentName, unitName, resultP1, resultP2 }) {
+https://raw.githubusercontent.com/tamaramilgar-tech/comunicacion-telefonica/main/js/certificate.js
+function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, resultP3, resultP4 }) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
 
@@ -11,13 +12,16 @@ function generateCertificatePDF({ studentName, unitName, resultP1, resultP2 }) {
   doc.setFontSize(12);
   doc.text(`Nombre del alumno/a: ${studentName}`, 20, 55);
   doc.text(`Unidad: ${unitName}`, 20, 75);
-  doc.text(`Resultado FASE 1: ${resultP1}%`, 20, 95);
-  doc.text(`Resultado FASE 2: ${resultP2}%`, 20, 115);
-  doc.text(`Fecha: ${dateStr}`, 20, 135);
+
+  doc.text(`Resultado FASE 1: ${resultP1 ?? "-"}%`, 20, 95);
+  doc.text(`Resultado FASE 2: ${resultP2 ?? "-"}%`, 20, 110);
+  doc.text(`Resultado FASE 3: ${resultP3 ?? "-"}%`, 20, 125);
+  doc.text(`Resultado FASE 4: ${resultP4 ?? "-"}%`, 20, 140);
+
+  doc.text(`Fecha: ${dateStr}`, 20, 160);
 
   doc.setFontSize(12);
-  doc.text("Superado con éxito (≥80%)", 20, 165);
+  doc.text("(Superado con éxito — mínimo 80%)", 20, 185);
 
   doc.save(`Certificado_${studentName.replace(/\s+/g,"_")}.pdf`);
 }
-
