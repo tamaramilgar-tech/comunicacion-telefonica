@@ -165,6 +165,31 @@
 
 
   // ========= Arranque =========
+  // ========= Certificado =========
+const downloadBtn = document.getElementById("downloadCertBtn");
+if (downloadBtn) {
+  downloadBtn.addEventListener("click", () => {
+    // Bloqueo fuerte: solo si está desbloqueado el certificado
+    if (!state.unlocked.certificate || !state.passed.phase4) {
+      alert("Certificado bloqueado: debes completar todas las fases (mínimo 80%) y verificación docente.");
+      return;
+    }
+
+    const studentName = (document.getElementById("studentName")?.value || "").trim() || "Alumno/a";
+    const unitName = window.UNIT_NAME || "Unidad";
+
+    // Usamos los % guardados por el quiz engine
+    generateCertificatePDF({
+      studentName,
+      unitName,
+      resultP1: state.scores.phase1,
+      resultP2: state.scores.phase2,
+      resultP3: state.scores.phase3,
+      resultP4: state.scores.phase4,
+    });
+  });
+}
+
   refreshUI();
   showView("home");
 })();
