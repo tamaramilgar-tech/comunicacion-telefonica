@@ -1,12 +1,97 @@
+body {
+  font-family: Arial, sans-serif;
+  background: #0b1020;
+  color: #fff;
+  margin: 0;
+}
 
-body{font-family:Arial,sans-serif;background:#0b1020;color:#fff;margin:0}
-.container{max-width:900px;margin:auto;padding:20px}
-.card{background:#111a33;padding:20px;border-radius:10px}
-button{padding:10px 15px;margin-top:10px}
-.hidden{display:none}
+.container {
+  max-width: 900px;
+  margin: auto;
+  padding: 20px;
+}
+
+.header {
+  background: #0f1730;
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+}
+
+h1, h2, h3 {
+  margin: 0 0 10px 0;
+}
+
+p {
+  line-height: 1.45;
+}
+
+.card {
+  background: #111a33;
+  padding: 20px;
+  border-radius: 10px;
+}
+
+/* Botones */
+button {
+  padding: 10px 15px;
+  margin-top: 10px;
+  border: 0;
+  border-radius: 8px;
+  background: #1c2a57;
+  color: #fff;
+  cursor: pointer;
+}
+
+button:hover {
+  filter: brightness(1.08);
+}
+
+button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* Pestañas */
+.tab {
+  margin-right: 6px;
+  margin-top: 10px;
+}
+
+/* Inputs */
+input[type="text"] {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.15);
+  background: #0b1020;
+  color: #fff;
+  outline: none;
+}
+
+input[type="text"]::placeholder {
+  color: rgba(255,255,255,0.6);
+}
+
+/* Mostrar/ocultar vistas */
+.hidden {
+  display: none;
+}
 
 /* Extras para el candado docente */
-.msg{margin-top:8px}
-.teacher-gate{background:#111a33;padding:16px;border-radius:10px;margin:14px 0}
-.teacher-gate input{padding:10px}
-.teacher-gate button{padding:10px 15px}
+.msg {
+  margin-top: 8px;
+  opacity: 0.9;
+}
+
+.teacher-gate {
+  background: #111a33;
+  padding: 16px;
+  border-radius: 10px;
+  margin: 14px 0;
+}
+
+.teacher-gate input {
+  padding: 10px;
+}
+
+.teacher-gate button {
+  padding: 10px 15px;
+}
