@@ -209,6 +209,8 @@ if (certBtn) certBtn.disabled = !state.unlocked.certificate;
 if (downloadBtn) downloadBtn.disabled = !state.unlocked.certificate;
 
 showView("home");
+})();
+
 
 
 
