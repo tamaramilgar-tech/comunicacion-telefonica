@@ -190,6 +190,11 @@ if (downloadBtn) {
   });
 }
 
-  refreshUI();
+  refreshUI();const certBtn = document.getElementById("certTab");
+if (certBtn) certBtn.disabled = !state.unlocked.certificate;
+
+const downloadBtn = document.getElementById("downloadCertBtn");
+if (downloadBtn) downloadBtn.disabled = !state.unlocked.certificate;
+
   showView("home");
 })();
