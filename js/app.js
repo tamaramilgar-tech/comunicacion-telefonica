@@ -102,37 +102,42 @@
       showView("certificate");
     });
   }
-  // ========= PARCHE "CORREGIR" (SIN TOCAR HTML) =========
-  document.querySelectorAll("button").forEach(btn => {
-    if ((btn.textContent || "").trim().toLowerCase() !== "corregir") return;
 
-    btn.addEventListener("click", (e) => {
-      e.preventDefault();
+  // ========= PARCHE DEFINITIVO "CORREGIR" (delegación) =========
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("button, a, [role='button']");
+    if (!el) return;
 
-      const current =
-        !views.phase1?.classList.contains("hidden") ? "phase1" :
-        !views.phase2?.classList.contains("hidden") ? "phase2" :
-        !views.phase3?.classList.contains("hidden") ? "phase3" :
-        !views.phase4?.classList.contains("hidden") ? "phase4" :
-        null;
+    const txt = (el.textContent || "").trim().toLowerCase();
+    if (txt !== "corregir") return;
 
-      if (!current) return;
+    e.preventDefault();
 
-      const flow = {
-        phase1: "phase2",
-        phase2: "phase3",
-        phase3: "phase4",
-        phase4: "certificate",
-      };
+    const isVisible = (key) => views[key] && !views[key].classList.contains("hidden");
 
-      const next = flow[current];
-      if (!next) return;
+    let current =
+      isVisible("phase1") ? "phase1" :
+      isVisible("phase2") ? "phase2" :
+      isVisible("phase3") ? "phase3" :
+      isVisible("phase4") ? "phase4" :
+      null;
 
-      state.unlocked[next] = true;
-      save();
-      refreshUI();
-      showView(next);
-    });
+    if (!current) return;
+
+    const nextMap = {
+      phase1: "phase2",
+      phase2: "phase3",
+      phase3: "phase4",
+      phase4: "certificate",
+    };
+
+    const next = nextMap[current];
+    if (!next) return;
+
+    state.unlocked[next] = true;
+    save();
+    refreshUI();
+    showView(next);
   });
 
   // ========= Arranque =========
