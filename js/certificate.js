@@ -1,4 +1,4 @@
-https://raw.githubusercontent.com/tamaramilgar-tech/comunicacion-telefonica/main/js/certificate.js
+
 function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, resultP3, resultP4 }) {
   const { jsPDF } = window.jspdf;
   const doc = new jsPDF();
