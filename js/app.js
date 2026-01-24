@@ -139,6 +139,59 @@
     refreshUI();
     showView(next);
   });
+  // ========= PARCHE VALIDAR DOCENTE =========
+  document.addEventListener("click", async (e) => {
+    const btn = e.target.closest("button");
+    if (!btn) return;
+
+    if ((btn.textContent || "").trim().toLowerCase() !== "validar") return;
+
+    e.preventDefault();
+
+    const input = btn.parentElement.querySelector("input");
+    if (!input) return;
+
+    const code = input.value.trim();
+    if (code.length !== 6) {
+      alert("El código debe tener 6 caracteres");
+      return;
+    }
+
+    // Detectar fase actual visible
+    const isVisible = (k) => views[k] && !views[k].classList.contains("hidden");
+    const phase =
+      isVisible("phase1") ? "phase1" :
+      isVisible("phase2") ? "phase2" :
+      isVisible("phase3") ? "phase3" :
+      isVisible("phase4") ? "phase4" :
+      null;
+
+    if (!phase) return;
+
+    const ok = await TeacherGate.verify(phase, code);
+
+    if (!ok) {
+      alert("Código incorrecto");
+      return;
+    }
+
+    // Desbloquea fase siguiente
+    const nextMap = {
+      phase1: "phase2",
+      phase2: "phase3",
+      phase3: "phase4",
+      phase4: "certificate",
+    };
+
+    const next = nextMap[phase];
+    if (!next) return;
+
+    TeacherGate.setUnlocked(next);
+    state.unlocked[next] = true;
+    save();
+    refreshUI();
+    showView(next);
+  });
 
   // ========= Arranque =========
   refreshUI();
