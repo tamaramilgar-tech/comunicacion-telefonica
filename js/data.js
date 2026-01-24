@@ -153,7 +153,7 @@ const phase4Bank = [
   { q:"Si no puedes cumplir un plazo, lo profesional es…", options:["No contestar","Proponer alternativa y nuevo plazo realista","Prometer igual","Culpar a otro"], answerIndex:1 },
   { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
   { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
-
+];
 window.phase1Bank = phase1Bank;
 window.phase2Bank = phase2Bank;
 window.phase3Bank = phase3Bank;
