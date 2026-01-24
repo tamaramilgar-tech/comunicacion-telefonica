@@ -2,7 +2,8 @@
 // Datos de la unidad y bancos de preguntas (SOLO DATOS, sin lógica).
 // El motor (render/nota/desbloqueos) debe estar en app.js.
 
-const UNIT_NAME = "Unidad 3 · Comunicación telefónica";
+window.UNIT_NAME = "Unidad 3 · Comunicación telefónica";
+
 
 /**
  * Formato:
@@ -153,10 +154,11 @@ const phase4Bank = [
   { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
   { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
 ];
-const UNIT_NAME = "...";
 
-const phase1Bank = [ ... ];
-const phase2Bank = [ ... ];
-const phase3Bank = [ ... ];
-const phase4Bank = [ ... ];
+
+window.phase1Bank = phase1Bank;
+window.phase2Bank = phase2Bank;
+window.phase3Bank = phase3Bank;
+window.phase4Bank = phase4Bank;
+
 
