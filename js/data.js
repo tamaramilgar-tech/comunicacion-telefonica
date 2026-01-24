@@ -150,3 +150,149 @@ const phase4Bank = [
   { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
   { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
 ];
+  // ==========================
+  // FIX DEFINITIVO: IDs reales p1/p2/p3/p4
+  // ==========================
+  const V = {
+    home: document.getElementById("view-home"),
+    p1: document.getElementById("view-phase1"),
+    p2: document.getElementById("view-phase2"),
+    p3: document.getElementById("view-phase3"),
+    p4: document.getElementById("view-phase4"),
+    cert: document.getElementById("view-certificate"),
+  };
+
+  const TABS = {
+    p1: document.querySelector('[data-view="phase1"]'),
+    p2: document.querySelector('[data-view="phase2"]'),
+    p3: document.querySelector('[data-view="phase3"]'),
+    p4: document.querySelector('[data-view="phase4"]'),
+    cert: document.querySelector('[data-view="certificate"]'),
+  };
+
+  // Botones y contenedores reales
+  const QUIZ = {
+    p1: document.getElementById("p1Quiz"),
+    p2: document.getElementById("p2Quiz"),
+    p3: document.getElementById("p3Quiz"),
+    p4: document.getElementById("p4Quiz"),
+  };
+
+  const SUBMIT = {
+    p1: document.getElementById("p1SubmitQuiz"),
+    p2: document.getElementById("p2SubmitQuiz"),
+    p3: document.getElementById("p3SubmitQuiz"),
+    p4: document.getElementById("p4SubmitQuiz"),
+  };
+
+  // Si el botón existe pero está disabled, lo habilitamos cuando toque
+  function unlockTab(tabEl) {
+    if (tabEl) tabEl.disabled = false;
+  }
+
+  function lockTab(tabEl) {
+    if (tabEl) tabEl.disabled = true;
+  }
+
+  // 1) Desbloqueo de fases según tu flujo real
+  window.addEventListener("teacherGateUpdated", () => {
+    // si TeacherGate marca desbloqueo, habilita tabs
+    if (window.TeacherGate?.isUnlocked) {
+      if (TeacherGate.isUnlocked("phase2")) unlockTab(TABS.p2);
+      if (TeacherGate.isUnlocked("phase3")) unlockTab(TABS.p3);
+      if (TeacherGate.isUnlocked("phase4")) unlockTab(TABS.p4);
+      if (TeacherGate.isUnlocked("certificate")) unlockTab(TABS.cert);
+    }
+  });
+  // ==========================
+  // FIX DEFINITIVO: IDs reales p1/p2/p3/p4
+  // ==========================
+  const V = {
+    home: document.getElementById("view-home"),
+    p1: document.getElementById("view-phase1"),
+    p2: document.getElementById("view-phase2"),
+    p3: document.getElementById("view-phase3"),
+    p4: document.getElementById("view-phase4"),
+    cert: document.getElementById("view-certificate"),
+  };
+
+  const TABS = {
+    p1: document.querySelector('[data-view="phase1"]'),
+    p2: document.querySelector('[data-view="phase2"]'),
+    p3: document.querySelector('[data-view="phase3"]'),
+    p4: document.querySelector('[data-view="phase4"]'),
+    cert: document.querySelector('[data-view="certificate"]'),
+  };
+
+  // Botones y contenedores reales
+  const QUIZ = {
+    p1: document.getElementById("p1Quiz"),
+    p2: document.getElementById("p2Quiz"),
+    p3: document.getElementById("p3Quiz"),
+    p4: document.getElementById("p4Quiz"),
+  };
+
+  const SUBMIT = {
+    p1: document.getElementById("p1SubmitQuiz"),
+    p2: document.getElementById("p2SubmitQuiz"),
+    p3: document.getElementById("p3SubmitQuiz"),
+    p4: document.getElementById("p4SubmitQuiz"),
+  };
+
+  // Si el botón existe pero está disabled, lo habilitamos cuando toque
+  function unlockTab(tabEl) {
+    if (tabEl) tabEl.disabled = false;
+  }
+
+  function lockTab(tabEl) {
+    if (tabEl) tabEl.disabled = true;
+  }
+
+  // 1) Desbloqueo de fases según tu flujo real
+  window.addEventListener("teacherGateUpdated", () => {
+    // si TeacherGate marca desbloqueo, habilita tabs
+    if (window.TeacherGate?.isUnlocked) {
+      if (TeacherGate.isUnlocked("phase2")) unlockTab(TABS.p2);
+      if (TeacherGate.isUnlocked("phase3")) unlockTab(TABS.p3);
+      if (TeacherGate.isUnlocked("phase4")) unlockTab(TABS.p4);
+      if (TeacherGate.isUnlocked("certificate")) unlockTab(TABS.cert);
+    }
+  });
+
+  // 2) FIX: Fase 4 no se desbloquea porque se guarda con clave distinta.
+  // Forzamos coherencia usando phaseId EXACTOS.
+  function forceUnlock(phaseId) {
+    try { window.TeacherGate?.setUnlocked?.(phaseId); } catch {}
+    // además desbloqueo local del app.js (por si)
+    if (phaseId === "phase2") unlockTab(TABS.p2);
+    if (phaseId === "phase3") unlockTab(TABS.p3);
+    if (phaseId === "phase4") unlockTab(TABS.p4);
+    if (phaseId === "certificate") unlockTab(TABS.cert);
+  }
+
+  // 3) ENGANCHE: cuando pulses "Validar" (p2VerifyBtn/p3VerifyBtn/p4VerifyBtn si existen),
+  // desbloquea fase siguiente.
+  ["p2VerifyBtn", "p3VerifyBtn", "p4VerifyBtn"].forEach((id) => {
+    const b = document.getElementById(id);
+    if (!b) return;
+    b.addEventListener("click", () => {
+      // Al validar fase 2 -> desbloquear fase 3; fase 3 -> fase 4; fase 4 -> certificado
+      if (id === "p2VerifyBtn") forceUnlock("phase3");
+      if (id === "p3VerifyBtn") forceUnlock("phase4");
+      if (id === "p4VerifyBtn") forceUnlock("certificate");
+    });
+  });
+
+  // 4) IMPORTANTE: si NO hay test (solo actividad práctica), habilita "Corregir" igualmente
+  Object.entries(SUBMIT).forEach(([k, btn]) => {
+    if (!btn) return;
+    // si no hay preguntas renderizadas dentro del quiz, no bloquees
+    const quizEl = QUIZ[k];
+    const hasQuestions = quizEl && quizEl.querySelector("input, label, .question, .option");
+    if (!hasQuestions) btn.disabled = false;
+  });
+
+  // 5) Si tus tabs están bloqueadas por defecto, asegúrate de que fase1 esté accesible
+  unlockTab(TABS.p1);
+
+
