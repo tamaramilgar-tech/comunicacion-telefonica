@@ -1,4 +1,3 @@
-
 const UNIT_NAME = "Unidad 3 · Comunicación telefónica";
 
 /**
@@ -102,6 +101,5 @@ const phase3Bank = [
   { q:"La nota se redacta preferentemente…", options:["A los 3 días","Justo tras la llamada","Solo si te acuerdas","Antes de la llamada"], answerIndex:1 },
   { q:"Si pide que le llamen por la tarde…", options:["Ignorarlo","Registrar preferencia","Llamar a cualquier hora","No tomar nota"], answerIndex:1 },
   { q:"Campo típico de una plantilla:", options:["Nº de zapatilla","Asunto/motivo","Color favorito","Serie preferida"], answerIndex:1 },
-  { q:"Para el 'mensaje' conviene…", options:["]()
-{ q:"Para el 'mensaje' conviene…", options:["Ser concreto y verificable","Opinar y juzgar","Escribir sin datos","Usar jerga incomprensible"], answerIndex:0 }
+  { q:"Para el 'mensaje' conviene…", options:["Ser concreto y verificable","Opinar y juzgar","Escribir sin datos","Usar jerga incomprensible"], answerIndex:0 }
 ];
