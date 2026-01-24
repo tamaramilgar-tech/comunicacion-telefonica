@@ -1,6 +1,6 @@
 // js/app.js
 (() => {
-  "use strict";
+  "use strict";console.log("CARGANDO js/app.js OK");
 
   // ========= Vistas =========
   const views = {
