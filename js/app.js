@@ -21,6 +21,20 @@
   const KEY = "u3_tel_progress";
   const state = JSON.parse(localStorage.getItem(KEY) || "{}");
   state.unlocked = state.unlocked || { phase1: true, phase2: false, phase3: false, phase4: false, certificate: false };
+// Estado necesario para tests y certificado
+state.passed = state.passed || {
+  phase1: false,
+  phase2: false,
+  phase3: false,
+  phase4: false
+};
+
+state.scores = state.scores || {
+  phase1: 0,
+  phase2: 0,
+  phase3: 0,
+  phase4: 0
+};
 
   function save() {
     localStorage.setItem(KEY, JSON.stringify(state));
@@ -161,12 +175,11 @@
       showView(unlockTo);
     });
   });
-
-
-
-  // ========= Arranque =========
-  // ========= Certificado =========
+// ======== Arranque ========
+// ======== Certificado ========
+const certBtn = document.getElementById("certTab");
 const downloadBtn = document.getElementById("downloadCertBtn");
+
 if (downloadBtn) {
   downloadBtn.addEventListener("click", () => {
     // Bloqueo fuerte: solo si está desbloqueado el certificado
@@ -175,10 +188,10 @@ if (downloadBtn) {
       return;
     }
 
-    const studentName = (document.getElementById("studentName")?.value || "").trim() || "Alumno/a";
+    const studentName =
+      (document.getElementById("studentName")?.value || "").trim() || "Alumno/a";
     const unitName = window.UNIT_NAME || "Unidad";
 
-    // Usamos los % guardados por el quiz engine
     generateCertificatePDF({
       studentName,
       unitName,
@@ -190,11 +203,13 @@ if (downloadBtn) {
   });
 }
 
-  refreshUI();const certBtn = document.getElementById("certTab");
-if (certBtn) certBtn.disabled = !state.unlocked.certificate;
+refreshUI();
 
-const downloadBtn = document.getElementById("downloadCertBtn");
+if (certBtn) certBtn.disabled = !state.unlocked.certificate;
 if (downloadBtn) downloadBtn.disabled = !state.unlocked.certificate;
 
-  showView("home");
-})();
+showView("home");
+
+
+
+ 
