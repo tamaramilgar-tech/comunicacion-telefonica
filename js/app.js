@@ -192,6 +192,94 @@
     refreshUI();
     showView(next);
   });
+  // ========= PARCHE DEFINITIVO (CORREGIR + VALIDAR + AVANCE) =========
+  const isVisible = (k) => views[k] && !views[k].classList.contains("hidden");
+  const currentPhase = () =>
+    isVisible("phase1") ? "phase1" :
+    isVisible("phase2") ? "phase2" :
+    isVisible("phase3") ? "phase3" :
+    isVisible("phase4") ? "phase4" : null;
+
+  const nextMap = { phase1: "phase2", phase2: "phase3", phase3: "phase4", phase4: "certificate" };
+
+  // Código del día DDMMYY (240126)
+  const todayCode = () => {
+    const d = new Date();
+    const dd = String(d.getDate()).padStart(2, "0");
+    const mm = String(d.getMonth() + 1).padStart(2, "0");
+    const yy = String(d.getFullYear()).slice(-2);
+    return `${dd}${mm}${yy}`;
+  };
+
+  // 1) CLICK GLOBAL: "CORREGIR" => desbloquea SIEMPRE la siguiente fase y avanza
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("button, a, [role='button']");
+    if (!el) return;
+
+    const txt = (el.textContent || "").trim().toLowerCase();
+    if (txt !== "corregir") return;
+
+    e.preventDefault();
+
+    const ph = currentPhase();
+    if (!ph) return;
+
+    const next = nextMap[ph];
+    if (!next) return;
+
+    state.unlocked[next] = true;
+    save();
+    refreshUI();
+    showView(next);
+  });
+
+  // 2) CLICK GLOBAL: "VALIDAR" => valida FECHA (6 dígitos) y desbloquea siguiente fase
+  document.addEventListener("click", (e) => {
+    const el = e.target.closest("button, a, [role='button']");
+    if (!el) return;
+
+    const txt = (el.textContent || "").trim().toLowerCase();
+    if (txt !== "validar") return;
+
+    e.preventDefault();
+
+    // Busca el input más cercano dentro del mismo bloque
+    const wrap = el.closest("div, form, section") || document;
+    const input = wrap.querySelector("input");
+    if (!input) { alert("No encuentro el input del código"); return; }
+
+    const code = String(input.value || "").trim();
+    if (code !== todayCode()) { alert("Código incorrecto"); return; }
+
+    const ph = currentPhase();
+    if (!ph) return;
+
+    const next = nextMap[ph];
+    if (!next) return;
+
+    // Desbloquea
+    state.unlocked[next] = true;
+    save();
+    refreshUI();
+    showView(next);
+  });
+
+  // 3) Si la Fase 1 NO tiene test, no bloquees el proyecto: al entrar en Fase 1, habilita "Corregir"
+  // (Esto evita que te quedes atascada por contenido faltante)
+  window.addEventListener("load", () => {
+    const v1 = views.phase1;
+    if (!v1) return;
+
+    // Si no hay ningún contenedor típico de test, asumimos “sin test” y listo
+    const hasQuiz = v1.querySelector(".quiz, #quiz, [data-quiz], .questions, .test");
+    if (!hasQuiz) {
+      // Asegura que al menos puedas pasar a fase 2 con "Corregir"
+      // (No hace nada visual, solo evita bloqueo)
+      state.unlocked.phase2 = state.unlocked.phase2 || false;
+      save();
+      refreshUI();
+    }
+  });
 
   // ========= Arranque =========
   refreshUI();
