@@ -4,12 +4,12 @@ const UNIT_NAME = "Unidad 3 · Comunicación telefónica";
  * Formato:
  * { q: "Texto", options: ["A","B","C","D"], answerIndex: 0..3 }
  *
- * Bancos: 30 preguntas por fase (anti-copia).
+ * Bancos: 30 preguntas por fase.
  * El motor en app.js selecciona 10 aleatorias y baraja opciones.
  */
 
 // =====================
-// FASE 1 · Conceptos y protocolo (30)
+// FASE 1 (30)
 // =====================
 const phase1Bank = [
   { q:"¿Cuál es el objetivo principal del saludo profesional en una llamada?", options:["Cerrar la llamada rápido","Identificar y generar confianza","Evitar preguntas","Pedir datos bancarios"], answerIndex:1 },
@@ -45,7 +45,7 @@ const phase1Bank = [
 ];
 
 // =====================
-// FASE 2 · Audio: atención telefónica (30)
+// FASE 2 (30)
 // =====================
 const phase2Bank = [
   { q:"En una llamada comercial, antes de ofrecer una solución debes…", options:["Interrumpir","Escuchar y confirmar el motivo","Cambiar el tema","Pedir datos bancarios"], answerIndex:1 },
@@ -81,7 +81,7 @@ const phase2Bank = [
 ];
 
 // =====================
-// FASE 3 · Nota de llamada (30)
+// FASE 3 (30)
 // =====================
 const phase3Bank = [
   { q:"Dato imprescindible en una nota de llamada:", options:["Color favorito","Fecha y hora","Redes sociales","Opinión personal"], answerIndex:1 },
@@ -101,5 +101,52 @@ const phase3Bank = [
   { q:"La nota se redacta preferentemente…", options:["A los 3 días","Justo tras la llamada","Solo si te acuerdas","Antes de la llamada"], answerIndex:1 },
   { q:"Si pide que le llamen por la tarde…", options:["Ignorarlo","Registrar preferencia","Llamar a cualquier hora","No tomar nota"], answerIndex:1 },
   { q:"Campo típico de una plantilla:", options:["Nº de zapatilla","Asunto/motivo","Color favorito","Serie preferida"], answerIndex:1 },
-  { q:"Para el 'mensaje' conviene…", options:["Ser concreto y verificable","Opinar y juzgar","Escribir sin datos","Usar jerga incomprensible"], answerIndex:0 }
+  { q:"Para el 'mensaje' conviene…", options:["Ser concreto y verificable","Opinar y juzgar","Escribir sin datos","Usar jerga incomprensible"], answerIndex:0 },
+  { q:"Una nota debe incluir el destinatario porque…", options:["Es obligatorio por estética","Asegura que llegue a quien corresponde","Da igual a quién vaya","Evita escribir el motivo"], answerIndex:1 },
+  { q:"Si el cliente deja varios temas, la nota debe…", options:["Elegir uno y omitir el resto","Listar los puntos con claridad","Escribirlo en desorden","Añadir opiniones"], answerIndex:1 },
+  { q:"La urgencia se registra para…", options:["Meter presión","Priorizar la devolución","Evitar responder","Cambiar el tema"], answerIndex:1 },
+  { q:"Dato NO recomendable en la nota:", options:["Insultos del cliente","Hechos y datos de contacto","Fecha y hora","Motivo"], answerIndex:0 },
+  { q:"Si hay un número de expediente, conviene…", options:["Ignorarlo","Anotarlo como referencia","Inventarlo","Cambiarlo"], answerIndex:1 },
+  { q:"Al registrar teléfono/email, conviene…", options:["Escribirlo como sea","Repetir/confirmar para evitar errores","Omitirlo siempre","Pedir redes sociales"], answerIndex:1 },
+  { q:"Una nota profesional usa…", options:["Mayúsculas y gritos","Lenguaje formal y claro","Jerga interna sin explicar","Bromas"], answerIndex:1 },
+  { q:"¿Cuándo es mejor redactar la nota?", options:["Antes de atender","Justo después de colgar","Al día siguiente","Cuando te acuerdes"], answerIndex:1 },
+  { q:"Si la llamada se corta, la nota debe…", options:["No hacerse","Incluir que se cortó y lo hablado","Inventar el final","Culpar al cliente"], answerIndex:1 },
+  { q:"En motivo, lo correcto es…", options:["Poner 'varios'","Especificar el tema concreto","Poner 'nada'","Poner una opinión"], answerIndex:1 },
+  { q:"La devolución debe indicar…", options:["Solo 'llamar'","Cuándo y a qué contacto","Nada","Que el cliente espere"], answerIndex:1 }
+];
+
+// =====================
+// FASE 4 (30) Correo + mensaje interno
+// =====================
+const phase4Bank = [
+  { q:"En un correo profesional, el asunto debe ser…", options:["Vago ('Hola')","Claro y específico","Con emoticonos","Una frase larga sin sentido"], answerIndex:1 },
+  { q:"Estructura recomendada de un correo:", options:["Sin saludo ni cierre","Saludo + contexto + solicitud/acción + cierre","Solo adjunto","Todo en mayúsculas"], answerIndex:1 },
+  { q:"El saludo más adecuado en entorno formal:", options:["Ey","Estimado/a + nombre / Buenos días","Qué pasa","Holiiii"], answerIndex:1 },
+  { q:"¿Qué es buena práctica con adjuntos?", options:["No mencionarlos","Mencionarlos en el cuerpo y revisar que estén","Enviar sin revisar","Adjuntar archivos sin nombre"], answerIndex:1 },
+  { q:"El tono correcto en un correo a cliente es…", options:["Irónico","Cordial, claro y respetuoso","Agresivo","Excesivamente coloquial"], answerIndex:1 },
+  { q:"Cuando pides una acción, conviene…", options:["No indicar plazo","Indicar acción y plazo realista","Exigir sin contexto","No dar detalles"], answerIndex:1 },
+  { q:"Firma profesional incluye…", options:["Apodos","Nombre, cargo/área y contacto","Chistes","Datos privados innecesarios"], answerIndex:1 },
+  { q:"Uso correcto de CC:", options:["Copiar a todo el mundo","Incluir solo a quienes deban estar informados","Nunca usar CC","Usar CC para presionar"], answerIndex:1 },
+  { q:"Uso correcto de CCO:", options:["Ocultar destinatarios cuando es necesario","Para regañar","Para enviar spam","No sirve para nada"], answerIndex:0 },
+  { q:"Antes de enviar, conviene…", options:["Enviar rápido","Revisar ortografía y datos","No releer","Cambiar el destinatario al azar"], answerIndex:1 },
+  { q:"En un mensaje interno (chat/CRM) debe primar…", options:["Chistes","Brevedad con datos clave","Ambigüedad","Opiniones personales"], answerIndex:1 },
+  { q:"Un buen mensaje interno incluye…", options:["Solo 'llámame'","Contexto + acción solicitada + referencia","Emojis","Rumores"], answerIndex:1 },
+  { q:"Si hay datos sensibles, lo correcto es…", options:["Pegarlos en cualquier chat","Usar canal autorizado y verificar destinatario","Decirlos en público","Mandarlos a un grupo"], answerIndex:1 },
+  { q:"Al pedir confirmación, conviene usar…", options:["Frases confusas","Pregunta concreta y verificable","Amenazas","Sarcasmo"], answerIndex:1 },
+  { q:"Un error típico en correos es…", options:["Asunto claro","No indicar qué se necesita","Pedir plazos","Firmar"], answerIndex:1 },
+  { q:"Cuando respondes a una queja por correo, primero debes…", options:["Culpar al cliente","Agradecer y reconocer la incidencia","Ignorarla","Responder con mayúsculas"], answerIndex:1 },
+  { q:"En seguimiento, es útil…", options:["No referenciar nada","Incluir nº de pedido/factura/expediente","Hablar de otro tema","No poner fechas"], answerIndex:1 },
+  { q:"En comunicación escrita, evita…", options:["Listas claras","Mayúsculas sostenidas (parece gritar)","Puntos clave","Cierre cordial"], answerIndex:1 },
+  { q:"Un cierre profesional:", options:["Bye","Quedo a su disposición / Un saludo","Nos vemos","Lo dicho"], answerIndex:1 },
+  { q:"Si necesitas información del cliente, debes…", options:["Pedirla de forma concreta","Pedir todo sin motivo","Pedir contraseñas","Pedir datos irrelevantes"], answerIndex:0 },
+  { q:"En CRM, registrar una interacción sirve para…", options:["Olvidarla","Trazabilidad y seguimiento","Evitar trabajar","Borrar historial"], answerIndex:1 },
+  { q:"En un mensaje interno, si es urgente…", options:["No decirlo","Indicar urgencia y plazo","Poner muchos emojis","Escribir en mayúsculas"], answerIndex:1 },
+  { q:"La claridad mejora cuando…", options:["Usas frases largas","Usas frases cortas y ordenadas","Omites datos","Mezclas temas"], answerIndex:1 },
+  { q:"Al reenviar un correo, conviene…", options:["No explicar nada","Añadir contexto y qué se espera","Quitar el historial","Cambiar el asunto sin motivo"], answerIndex:1 },
+  { q:"En correos, los bullets/listas sirven para…", options:["Confundir","Ordenar información y acciones","Rellenar","Evitar responsabilidad"], answerIndex:1 },
+  { q:"¿Qué dato ayuda a priorizar en un mensaje interno?", options:["Signo zodiacal","Impacto/urgencia y fecha límite","Color favorito","Estado de ánimo"], answerIndex:1 },
+  { q:"Si adjuntas un documento, el nombre del archivo debería…", options:["Ser 'documento'","Indicar contenido y fecha/versión","Tener emojis","No tener extensión"], answerIndex:1 },
+  { q:"Si no puedes cumplir un plazo, lo profesional es…", options:["No contestar","Proponer alternativa y nuevo plazo realista","Prometer igual","Culpar a otro"], answerIndex:1 },
+  { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
+  { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
 ];
