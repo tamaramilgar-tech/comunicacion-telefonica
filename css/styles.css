@@ -16,21 +16,9 @@ body {
   border-bottom: 1px solid rgba(255,255,255,0.08);
 }
 
-h1, h2, h3 {
-  margin: 0 0 10px 0;
-}
+h1, h2, h3 { margin: 0 0 10px 0; }
+p { line-height: 1.45; }
 
-p {
-  line-height: 1.45;
-}
-
-.card {
-  background: #111a33;
-  padding: 20px;
-  border-radius: 10px;
-}
-
-/* Botones */
 button {
   padding: 10px 15px;
   margin-top: 10px;
@@ -41,22 +29,11 @@ button {
   cursor: pointer;
 }
 
-button:hover {
-  filter: brightness(1.08);
-}
+button:hover { filter: brightness(1.08); }
+button:disabled { opacity: 0.45; cursor: not-allowed; }
 
-button:disabled {
-  opacity: 0.45;
-  cursor: not-allowed;
-}
+.tab { margin-right: 6px; margin-top: 10px; }
 
-/* Pestañas */
-.tab {
-  margin-right: 6px;
-  margin-top: 10px;
-}
-
-/* Inputs */
 input[type="text"] {
   padding: 10px;
   border-radius: 8px;
@@ -66,32 +43,16 @@ input[type="text"] {
   outline: none;
 }
 
-input[type="text"]::placeholder {
-  color: rgba(255,255,255,0.6);
-}
+input[type="text"]::placeholder { color: rgba(255,255,255,0.6); }
 
-/* Mostrar/ocultar vistas */
-.hidden {
-  display: none;
-}
+.hidden { display: none; }
 
-/* Extras para el candado docente */
-.msg {
-  margin-top: 8px;
-  opacity: 0.9;
-}
+/* Candado docente */
+.msg { margin-top: 8px; opacity: 0.9; }
 
 .teacher-gate {
   background: #111a33;
   padding: 16px;
   border-radius: 10px;
   margin: 14px 0;
-}
-
-.teacher-gate input {
-  padding: 10px;
-}
-
-.teacher-gate button {
-  padding: 10px 15px;
 }
