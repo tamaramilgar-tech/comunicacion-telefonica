@@ -1,4 +1,4 @@
-https://raw.githubusercontent.com/tamaramilgar-tech/comunicacion-telefonica/main/js/teacher-gate.js
+
 // js/teacher-gate.js
 // Candado docente (aula) sin backend.
 // Código = 6 caracteres de SHA-256(PIN|FASE|YYYY-MM-DD)
