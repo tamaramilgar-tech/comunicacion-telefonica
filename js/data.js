@@ -153,10 +153,10 @@ const phase4Bank = [
   { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
   { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
 ];
+const UNIT_NAME = "...";
 
-// Export explícito para app.js (por si quieres acceder como window.phase1Bank)
-window.UNIT_NAME = UNIT_NAME;
-window.phase1Bank = phase1Bank;
-window.phase2Bank = phase2Bank;
-window.phase3Bank = phase3Bank;
-window.phase4Bank = phase4Bank;
+const phase1Bank = [ ... ];
+const phase2Bank = [ ... ];
+const phase3Bank = [ ... ];
+const phase4Bank = [ ... ];
+
