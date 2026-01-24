@@ -178,7 +178,7 @@ state.scores = state.scores || {
 // ======== Arranque ========
 // ======== Certificado ========
 const certBtn = document.getElementById("certTab");
-const downloadBtn = document.getElementById("downloadCertBtn");
+const downloadCertBtnEl = document.getElementById("downloadCertBtn");
 
 if (downloadBtn) {
   downloadBtn.addEventListener("click", () => {
