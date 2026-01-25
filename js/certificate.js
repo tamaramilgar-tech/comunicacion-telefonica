@@ -1,5 +1,13 @@
-// js/certificate.js
-function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, resultP3, resultP4 }) {
+// js/certificado.js
+function generateCertificatePDF({
+  studentName,
+  unitName,
+  resultP1,
+  resultP2,
+  resultP3,
+  resultP4,
+  resultP5
+}) {
   if (!window.jspdf || typeof window.jspdf.jsPDF !== "function") {
     alert("No se pudo generar el PDF: no se cargó la librería jsPDF.");
     return;
@@ -24,9 +32,10 @@ function generateCertificatePDF({ studentName, unitName, resultP1, resultP2, res
   doc.text(`Resultado FASE 2: ${safe(resultP2)}%`, 20, 110);
   doc.text(`Resultado FASE 3: ${safe(resultP3)}%`, 20, 125);
   doc.text(`Resultado FASE 4: ${safe(resultP4)}%`, 20, 140);
+  doc.text(`Resultado FASE 5: ${safe(resultP5)}%`, 20, 155);
 
-  doc.text(`Fecha: ${dateStr}`, 20, 160);
-  doc.text("(Superado con éxito — mínimo 80%)", 20, 185);
+  doc.text(`Fecha: ${dateStr}`, 20, 175);
+  doc.text("(Superado con éxito — mínimo 80%)", 20, 195);
 
   const fileSafeName = String(studentName || "Alumno")
     .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
