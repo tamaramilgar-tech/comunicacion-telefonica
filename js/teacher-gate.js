@@ -1,4 +1,4 @@
-// js/puerta-del-profesor.js
+// js/teacher-gate.js
 // Código docente = FECHA DEL DÍA (DDMMYY)
 (() => {
   function todayCode() {
