@@ -5,19 +5,17 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Unidad 3 · Comunicación telefónica (FP GS)</title>
 
-  <!-- OJO: tu carpeta es "CSS" (mayúsculas) y el archivo "styles.css" -->
-  <link rel="stylesheet" href="CSS/styles.css" />
+  <link rel="stylesheet" href="css/styles.css" />
   <link rel="icon" href="data:,">
 
   <!-- jsPDF -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
 
-  <!-- Scripts (orden IMPORTANTE, con tus nombres reales) -->
+  <!-- Scripts (orden IMPORTANTE) -->
   <script src="js/data.js" defer></script>
-<script src="js/teacher-gate.js" defer></script>
-<script src="js/certificate.js" defer></script>
-<script src="js/app.js" defer></script>
-
+  <script src="js/teacher-gate.js" defer></script>
+  <script src="js/certificate.js" defer></script>
+  <script src="js/app.js" defer></script>
 </head>
 
 <body>
@@ -140,7 +138,6 @@
       <p id="p4TestLockMsg" class="msg"></p>
     </section>
 
-    <!-- ✅ FASE 5 -->
     <section id="view-phase5" class="hidden">
       <h2>FASE 5 · Evaluación integradora (interactiva)</h2>
       <p><strong>Entrega obligatoria en EVAGD:</strong> completa la actividad integradora indicada por el docente.</p>
@@ -155,10 +152,39 @@
         <p id="p5GateMsg" class="msg"></p>
       </div>
 
+      <hr style="margin:16px 0; opacity:.2;">
+
+      <h3>Actividad 1 · Ordena el protocolo</h3>
+      <p>Ordena los pasos de una llamada profesional (arriba = primero).</p>
+      <div id="p5Act1"></div>
+      <button id="p5Act1Check">Comprobar Actividad 1</button>
+      <p id="p5Act1Msg" class="msg"></p>
+
+      <hr style="margin:16px 0; opacity:.2;">
+
+      <h3>Actividad 2 · Empareja concepto → definición</h3>
+      <div id="p5Act2"></div>
+      <button id="p5Act2Check">Comprobar Actividad 2</button>
+      <p id="p5Act2Msg" class="msg"></p>
+
+      <hr style="margin:16px 0; opacity:.2;">
+
+      <h3>Actividad 3 · Elige la mejor respuesta</h3>
+      <div id="p5Act3"></div>
+      <button id="p5Act3Check">Comprobar Actividad 3</button>
+      <p id="p5Act3Msg" class="msg"></p>
+
+      <hr style="margin:16px 0; opacity:.2;">
+
+      <h3>Test final</h3>
       <div id="p5Quiz"></div>
       <button id="p5SubmitQuiz" disabled>Corregir</button>
       <div id="p5QuizResult"></div>
       <p id="p5TestLockMsg" class="msg"></p>
+
+      <p class="msg" style="opacity:.85; margin-top:10px;">
+        Nota: Para corregir el test final debes completar primero las 3 actividades y tener verificación del docente.
+      </p>
     </section>
 
     <section id="view-certificate" class="hidden">
