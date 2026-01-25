@@ -1,4 +1,4 @@
-// js/certificado.js
+// js/certificate.js
 function generateCertificatePDF({
   studentName,
   unitName,
