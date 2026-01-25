@@ -3,6 +3,10 @@
   "use strict";
   console.log("CARGANDO js/app.js OK");
 
+  // ========= Configuración =========
+  const MAX_ATTEMPTS = 3;            // ✅ intentos máximos
+  const QUESTIONS_PER_PHASE = 15;    // ✅ preguntas por fase
+
   // ========= Vistas =========
   const views = {
     home: document.getElementById("view-home"),
@@ -21,6 +25,10 @@
 
   // ========= Estado / Progreso =========
   const KEY = "u3_tel_progress_v5_es";
+  const ATTEMPTS_KEY = "u3_tel_attempts_v1";
+  const QUIZ_SHUFFLES_KEY = "u3_tel_quiz_shuffles_v1";
+  const QUIZ_PICK_KEY = "u3_tel_quiz_pick_v1";
+  const ACT_KEY = "u3_tel_phase5_activities_v1";
 
   const defaultState = {
     unlocked: { phase1: true, phase2: false, phase3: false, phase4: false, phase5: false, certificate: false },
@@ -50,9 +58,43 @@
     localStorage.setItem(KEY, JSON.stringify(state));
   }
 
+  // ========= Intentos =========
+  const attempts = (() => {
+    try { return JSON.parse(localStorage.getItem(ATTEMPTS_KEY) || "{}"); }
+    catch { return {}; }
+  })();
+
+  function saveAttempts() {
+    localStorage.setItem(ATTEMPTS_KEY, JSON.stringify(attempts));
+  }
+
+  function getAttempts(phaseKey) {
+    return Number(attempts[phaseKey] || 0);
+  }
+
+  function incAttempts(phaseKey) {
+    attempts[phaseKey] = getAttempts(phaseKey) + 1;
+    saveAttempts();
+  }
+
+  function attemptsLeft(phaseKey) {
+    return Math.max(0, MAX_ATTEMPTS - getAttempts(phaseKey));
+  }
+
+  function canAttempt(phaseKey) {
+    // si ya aprobó, no bloqueamos por intentos
+    if (state.passed[phaseKey]) return true;
+    return getAttempts(phaseKey) < MAX_ATTEMPTS;
+  }
+
   // ========= UI =========
   function setBadge(id, text) {
     const el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function setResult(resultId, text) {
+    const el = document.getElementById(resultId);
     if (el) el.textContent = text;
   }
 
@@ -65,21 +107,7 @@
     phase5: window.phase5Bank,
   };
 
-  // ========= Shuffle de opciones (anti-patrón "siempre B") =========
-  const QUIZ_SHUFFLES_KEY = "u3_tel_quiz_shuffles_v1";
-
-  const quizShuffles = (() => {
-    try {
-      return JSON.parse(localStorage.getItem(QUIZ_SHUFFLES_KEY) || "{}");
-    } catch {
-      return {};
-    }
-  })();
-
-  function saveShuffles() {
-    localStorage.setItem(QUIZ_SHUFFLES_KEY, JSON.stringify(quizShuffles));
-  }
-
+  // ========= Utils =========
   function shuffleArray(arr, rng = Math.random) {
     const a = arr.slice();
     for (let i = a.length - 1; i > 0; i--) {
@@ -87,6 +115,46 @@
       [a[i], a[j]] = [a[j], a[i]];
     }
     return a;
+  }
+
+  // ========= Selección aleatoria de preguntas (15 por fase, estable) =========
+  const quizPick = (() => {
+    try { return JSON.parse(localStorage.getItem(QUIZ_PICK_KEY) || "{}"); }
+    catch { return {}; }
+  })();
+
+  function savePick() {
+    localStorage.setItem(QUIZ_PICK_KEY, JSON.stringify(quizPick));
+  }
+
+  function ensurePhasePick(phaseKey) {
+    const bank = bankMap[phaseKey];
+    if (!Array.isArray(bank) || bank.length === 0) return;
+
+    const n = Math.min(QUESTIONS_PER_PHASE, bank.length);
+    if (!quizPick[phaseKey] || quizPick[phaseKey].length !== n) {
+      const idxs = shuffleArray(bank.map((_, i) => i)).slice(0, n);
+      quizPick[phaseKey] = idxs;
+      savePick();
+    }
+  }
+
+  function getPhaseQuestions(phaseKey) {
+    const bank = bankMap[phaseKey];
+    if (!Array.isArray(bank) || bank.length === 0) return [];
+    ensurePhasePick(phaseKey);
+    return (quizPick[phaseKey] || []).map(i => ({ ...bank[i], __origIndex: i }));
+  }
+
+  // ========= Shuffle de opciones (anti "siempre la B") =========
+  // Estructura: { phase1: [ { options:[...], correctIndex:n }, ... (por índice ORIGINAL del banco) ] , ... }
+  const quizShuffles = (() => {
+    try { return JSON.parse(localStorage.getItem(QUIZ_SHUFFLES_KEY) || "{}"); }
+    catch { return {}; }
+  })();
+
+  function saveShuffles() {
+    localStorage.setItem(QUIZ_SHUFFLES_KEY, JSON.stringify(quizShuffles));
   }
 
   function ensurePhaseShuffles(phaseKey) {
@@ -105,17 +173,20 @@
   }
 
   // ========= Actividades Fase 5 =========
-  const ACT_KEY = "u3_tel_phase5_activities_v1";
   const actState = (() => {
     try { return JSON.parse(localStorage.getItem(ACT_KEY) || "{}"); }
     catch { return {}; }
   })();
-  function saveActs() { localStorage.setItem(ACT_KEY, JSON.stringify(actState)); }
+
+  function saveActs() {
+    localStorage.setItem(ACT_KEY, JSON.stringify(actState));
+  }
 
   function activitiesDone() {
     return actState.a1 === true && actState.a2 === true && actState.a3 === true;
   }
 
+  // ========= refreshUI =========
   function refreshUI() {
     // Tabs
     document.querySelectorAll(".tab").forEach(btn => {
@@ -137,27 +208,39 @@
     setBadge("phase4Badge", state.passed.phase4 ? "FASE 4: completada" : "FASE 4: bloqueada");
     setBadge("phase5Badge", state.passed.phase5 ? "FASE 5: completada" : "FASE 5: bloqueada");
 
-    // Botones corregir: fase 2-4 solo si verificado docente
+    // Desactivar por intentos (solo si no ha aprobado)
+    ["phase1","phase2","phase3","phase4","phase5"].forEach((pk, i) => {
+      const n = i + 1;
+      const btn = document.getElementById(`p${n}SubmitQuiz`);
+      if (!btn) return;
+
+      // Se aplican otras reglas aparte (docente/actividades), pero si no hay intentos -> siempre disabled
+      if (!canAttempt(pk)) btn.disabled = true;
+    });
+
+    // Fases 2-4: requieren verificación docente para corregir (además de intentos)
     const p2Submit = document.getElementById("p2SubmitQuiz");
-    if (p2Submit) p2Submit.disabled = !state.verified.phase2;
+    if (p2Submit) p2Submit.disabled = p2Submit.disabled || !state.verified.phase2;
 
     const p3Submit = document.getElementById("p3SubmitQuiz");
-    if (p3Submit) p3Submit.disabled = !state.verified.phase3;
+    if (p3Submit) p3Submit.disabled = p3Submit.disabled || !state.verified.phase3;
 
     const p4Submit = document.getElementById("p4SubmitQuiz");
-    if (p4Submit) p4Submit.disabled = !state.verified.phase4;
+    if (p4Submit) p4Submit.disabled = p4Submit.disabled || !state.verified.phase4;
 
-    // Fase 5: docente + actividades
+    // Fase 5: requiere docente + actividades (además de intentos)
     const p5Submit = document.getElementById("p5SubmitQuiz");
-    if (p5Submit) p5Submit.disabled = !state.verified.phase5 || !activitiesDone();
+    if (p5Submit) p5Submit.disabled = p5Submit.disabled || !state.verified.phase5 || !activitiesDone();
 
-    // Mensaje guía en Fase 5
+    // Mensaje guía Fase 5
     const p5LockMsg = document.getElementById("p5TestLockMsg");
     if (p5LockMsg) {
       if (!state.verified.phase5) {
         p5LockMsg.textContent = "Test bloqueado. Introduce el código del docente para habilitar la corrección.";
       } else if (!activitiesDone()) {
         p5LockMsg.textContent = "Completa primero las 3 actividades interactivas para habilitar la corrección del test final.";
+      } else if (!canAttempt("phase5")) {
+        p5LockMsg.textContent = `Sin intentos disponibles (máximo ${MAX_ATTEMPTS}).`;
       } else {
         p5LockMsg.textContent = "";
       }
@@ -188,13 +271,14 @@
       const ok = confirm("¿Reiniciar progreso de esta unidad en ESTE navegador? (No afecta a otros dispositivos)");
       if (!ok) return;
 
-      // Borra progreso de esta unidad + desbloqueos del docente del día + shuffles + actividades
       Object.keys(localStorage)
         .filter(k =>
           k.includes("u3_tel_progress") ||
           k.startsWith("teacher_unlock_") ||
           k.toLowerCase().includes("teachergate") ||
+          k === ATTEMPTS_KEY ||
           k === QUIZ_SHUFFLES_KEY ||
+          k === QUIZ_PICK_KEY ||
           k === ACT_KEY
         )
         .forEach(k => localStorage.removeItem(k));
@@ -203,28 +287,30 @@
     });
   }
 
-  // ========= Render de Quiz =========
+  // ========= Render de Quiz (15 preguntas por fase) =========
   function renderQuiz(phaseKey, mountId) {
     const mount = document.getElementById(mountId);
     if (!mount) return;
 
-    const bank = bankMap[phaseKey];
-    if (!Array.isArray(bank) || bank.length === 0) {
+    const questions = getPhaseQuestions(phaseKey);
+    if (!Array.isArray(questions) || questions.length === 0) {
       mount.innerHTML = `<p class="msg">⚠️ No hay preguntas cargadas para ${phaseKey}. Revisa js/data.js.</p>`;
       return;
     }
 
+    // asegura shuffle por banco completo; luego usamos el shuffle del índice original
     ensurePhaseShuffles(phaseKey);
-    const phaseShuffle = quizShuffles[phaseKey];
+    const phaseShuffle = quizShuffles[phaseKey] || [];
 
-    mount.innerHTML = bank
+    mount.innerHTML = questions
       .map((item, qi) => {
-        const shuffled = phaseShuffle?.[qi];
+        const orig = item.__origIndex ?? qi;
+        const shuffled = phaseShuffle?.[orig];
         const optionsToUse = shuffled?.options || item.options;
 
+        const name = `${phaseKey}_q${qi}`; // ojo: qi es índice dentro del SUBSET (15)
         const opts = optionsToUse
           .map((opt, oi) => {
-            const name = `${phaseKey}_q${qi}`;
             const id = `${name}_o${oi}`;
             return `
               <label for="${id}" style="display:block; margin:.25rem 0;">
@@ -246,27 +332,23 @@
   }
 
   function gradeQuiz(phaseKey) {
-    const bank = bankMap[phaseKey];
-    if (!Array.isArray(bank) || bank.length === 0) return { ok: 0, total: 0, pct: 0 };
+    const questions = getPhaseQuestions(phaseKey);
+    if (!Array.isArray(questions) || questions.length === 0) return { ok: 0, total: 0, pct: 0 };
 
     ensurePhaseShuffles(phaseKey);
-    const phaseShuffle = quizShuffles[phaseKey];
+    const phaseShuffle = quizShuffles[phaseKey] || [];
 
     let ok = 0;
-    bank.forEach((item, qi) => {
+    questions.forEach((item, qi) => {
       const sel = document.querySelector(`input[name="${phaseKey}_q${qi}"]:checked`);
-      const correct = phaseShuffle?.[qi]?.correctIndex ?? item.answerIndex;
+      const orig = item.__origIndex ?? qi;
+      const correct = phaseShuffle?.[orig]?.correctIndex ?? item.answerIndex;
       if (sel && Number(sel.value) === correct) ok++;
     });
 
-    const total = bank.length;
+    const total = questions.length;
     const pct = Math.round((ok / total) * 100);
     return { ok, total, pct };
-  }
-
-  function setResult(resultId, text) {
-    const el = document.getElementById(resultId);
-    if (el) el.textContent = text;
   }
 
   function unlockNextAfterPass(phaseKey) {
@@ -287,10 +369,19 @@
   }
 
   function handleSubmit(phaseKey, resultId) {
+    // Intentos
+    if (!canAttempt(phaseKey)) {
+      setResult(resultId, `❌ Sin intentos disponibles. (Máximo ${MAX_ATTEMPTS})`);
+      refreshUI();
+      return;
+    }
+
+    incAttempts(phaseKey);
+
     const { ok, total, pct } = gradeQuiz(phaseKey);
     state.scores[phaseKey] = pct;
 
-    setResult(resultId, `Resultado: ${ok}/${total} (${pct}%)`);
+    setResult(resultId, `Resultado: ${ok}/${total} (${pct}%) — Intentos restantes: ${attemptsLeft(phaseKey)}`);
 
     if (pct >= 80) {
       state.passed[phaseKey] = true;
@@ -305,14 +396,14 @@
     }
   }
 
-  // Render quizzes
+  // ========= Render inicial de quizzes =========
   renderQuiz("phase1", "p1Quiz");
   renderQuiz("phase2", "p2Quiz");
   renderQuiz("phase3", "p3Quiz");
   renderQuiz("phase4", "p4Quiz");
   renderQuiz("phase5", "p5Quiz");
 
-  // Submit buttons
+  // ========= Botones de corrección =========
   const p1Submit = document.getElementById("p1SubmitQuiz");
   if (p1Submit) p1Submit.addEventListener("click", () => handleSubmit("phase1", "p1QuizResult"));
 
@@ -328,7 +419,7 @@
   const p5Submit = document.getElementById("p5SubmitQuiz");
   if (p5Submit) p5Submit.addEventListener("click", () => handleSubmit("phase5", "p5QuizResult"));
 
-  // ========= Verificación docente REAL =========
+  // ========= Verificación docente =========
   function setMsg(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
@@ -343,14 +434,14 @@
     state.verified[phaseKey] = unlockedToday;
 
     if (submit) {
-      if (phaseNum === 5) submit.disabled = !unlockedToday || !activitiesDone();
-      else submit.disabled = !unlockedToday;
+      if (phaseNum === 5) submit.disabled = !unlockedToday || !activitiesDone() || !canAttempt("phase5");
+      else submit.disabled = !unlockedToday || !canAttempt(phaseKey);
     }
 
     if (lockMsg && phaseNum !== 5) {
-      lockMsg.textContent = unlockedToday
-        ? ""
-        : "Test bloqueado. Introduce el código del docente para habilitar la corrección.";
+      if (!unlockedToday) lockMsg.textContent = "Test bloqueado. Introduce el código del docente para habilitar la corrección.";
+      else if (!canAttempt(phaseKey)) lockMsg.textContent = `Sin intentos disponibles (máximo ${MAX_ATTEMPTS}).`;
+      else lockMsg.textContent = "";
     }
   }
 
@@ -435,7 +526,7 @@
     });
   }
 
-  // ========= Actividades Fase 5 (montaje) =========
+  // ========= FASE 5: Actividades interactivas =========
   function mountAct1() {
     const mount = document.getElementById("p5Act1");
     if (!mount) return;
@@ -591,7 +682,7 @@
     }
   }
 
-  // Montar actividades fase 5
+  // Montar actividades fase 5 (si existen en el HTML)
   mountAct1();
   mountAct2();
   mountAct3();
