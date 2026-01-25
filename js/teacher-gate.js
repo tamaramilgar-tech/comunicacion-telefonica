@@ -1,4 +1,4 @@
-// js/teacher-gate.js
+// js/puerta-del-profesor.js
 // Código docente = FECHA DEL DÍA (DDMMYY)
 (() => {
   function todayCode() {
@@ -26,10 +26,5 @@
     return String(enteredCode || "").trim() === todayCode();
   }
 
-  window.TeacherGate = {
-    todayCode,
-    isUnlocked,
-    setUnlocked,
-    verify
-  };
+  window.TeacherGate = { todayCode, isUnlocked, setUnlocked, verify };
 })();
