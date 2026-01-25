@@ -1,6 +1,6 @@
-// js/datos.js
+// js/data.js
 // Datos de la unidad y bancos de preguntas (SOLO DATOS, sin lógica).
-// El motor (render/nota/desbloqueos) está en js/aplicación.js
+// El motor (render/nota/desbloqueos) está en js/app.js
 
 window.UNIT_NAME = "Unidad 3 · Comunicación telefónica";
 
