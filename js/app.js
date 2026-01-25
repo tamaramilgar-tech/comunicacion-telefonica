@@ -1,7 +1,7 @@
-// js/aplicación.js
+// js/app.js
 (() => {
   "use strict";
-  console.log("CARGANDO js/aplicación.js OK");
+  console.log("CARGANDO js/app.js OK");
 
   // ========= Vistas =========
   const views = {
@@ -56,6 +56,66 @@
     if (el) el.textContent = text;
   }
 
+  // ========= Bancos de preguntas =========
+  const bankMap = {
+    phase1: window.phase1Bank,
+    phase2: window.phase2Bank,
+    phase3: window.phase3Bank,
+    phase4: window.phase4Bank,
+    phase5: window.phase5Bank,
+  };
+
+  // ========= Shuffle de opciones (anti-patrón "siempre B") =========
+  const QUIZ_SHUFFLES_KEY = "u3_tel_quiz_shuffles_v1";
+
+  const quizShuffles = (() => {
+    try {
+      return JSON.parse(localStorage.getItem(QUIZ_SHUFFLES_KEY) || "{}");
+    } catch {
+      return {};
+    }
+  })();
+
+  function saveShuffles() {
+    localStorage.setItem(QUIZ_SHUFFLES_KEY, JSON.stringify(quizShuffles));
+  }
+
+  function shuffleArray(arr, rng = Math.random) {
+    const a = arr.slice();
+    for (let i = a.length - 1; i > 0; i--) {
+      const j = Math.floor(rng() * (i + 1));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a;
+  }
+
+  function ensurePhaseShuffles(phaseKey) {
+    const bank = bankMap[phaseKey];
+    if (!Array.isArray(bank) || bank.length === 0) return;
+
+    if (!quizShuffles[phaseKey] || quizShuffles[phaseKey].length !== bank.length) {
+      quizShuffles[phaseKey] = bank.map((item) => {
+        const idxs = shuffleArray(item.options.map((_, i) => i));
+        const shuffledOptions = idxs.map(i => item.options[i]);
+        const correctIndex = idxs.indexOf(item.answerIndex);
+        return { options: shuffledOptions, correctIndex };
+      });
+      saveShuffles();
+    }
+  }
+
+  // ========= Actividades Fase 5 =========
+  const ACT_KEY = "u3_tel_phase5_activities_v1";
+  const actState = (() => {
+    try { return JSON.parse(localStorage.getItem(ACT_KEY) || "{}"); }
+    catch { return {}; }
+  })();
+  function saveActs() { localStorage.setItem(ACT_KEY, JSON.stringify(actState)); }
+
+  function activitiesDone() {
+    return actState.a1 === true && actState.a2 === true && actState.a3 === true;
+  }
+
   function refreshUI() {
     // Tabs
     document.querySelectorAll(".tab").forEach(btn => {
@@ -77,7 +137,7 @@
     setBadge("phase4Badge", state.passed.phase4 ? "FASE 4: completada" : "FASE 4: bloqueada");
     setBadge("phase5Badge", state.passed.phase5 ? "FASE 5: completada" : "FASE 5: bloqueada");
 
-    // Botones corregir: fase 2-5 solo si verificado docente
+    // Botones corregir: fase 2-4 solo si verificado docente
     const p2Submit = document.getElementById("p2SubmitQuiz");
     if (p2Submit) p2Submit.disabled = !state.verified.phase2;
 
@@ -87,8 +147,21 @@
     const p4Submit = document.getElementById("p4SubmitQuiz");
     if (p4Submit) p4Submit.disabled = !state.verified.phase4;
 
+    // Fase 5: docente + actividades
     const p5Submit = document.getElementById("p5SubmitQuiz");
-    if (p5Submit) p5Submit.disabled = !state.verified.phase5;
+    if (p5Submit) p5Submit.disabled = !state.verified.phase5 || !activitiesDone();
+
+    // Mensaje guía en Fase 5
+    const p5LockMsg = document.getElementById("p5TestLockMsg");
+    if (p5LockMsg) {
+      if (!state.verified.phase5) {
+        p5LockMsg.textContent = "Test bloqueado. Introduce el código del docente para habilitar la corrección.";
+      } else if (!activitiesDone()) {
+        p5LockMsg.textContent = "Completa primero las 3 actividades interactivas para habilitar la corrección del test final.";
+      } else {
+        p5LockMsg.textContent = "";
+      }
+    }
 
     // Certificado
     const certTab = document.getElementById("certTab");
@@ -115,23 +188,20 @@
       const ok = confirm("¿Reiniciar progreso de esta unidad en ESTE navegador? (No afecta a otros dispositivos)");
       if (!ok) return;
 
-      // Borra progreso de esta unidad + desbloqueos del docente del día (TeacherGate)
+      // Borra progreso de esta unidad + desbloqueos del docente del día + shuffles + actividades
       Object.keys(localStorage)
-        .filter(k => k.includes("u3_tel_progress") || k.startsWith("teacher_unlock_") || k.toLowerCase().includes("teachergate"))
+        .filter(k =>
+          k.includes("u3_tel_progress") ||
+          k.startsWith("teacher_unlock_") ||
+          k.toLowerCase().includes("teachergate") ||
+          k === QUIZ_SHUFFLES_KEY ||
+          k === ACT_KEY
+        )
         .forEach(k => localStorage.removeItem(k));
 
       location.reload();
     });
   }
-
-  // ========= Bancos de preguntas =========
-  const bankMap = {
-    phase1: window.phase1Bank,
-    phase2: window.phase2Bank,
-    phase3: window.phase3Bank,
-    phase4: window.phase4Bank,
-    phase5: window.phase5Bank,
-  };
 
   // ========= Render de Quiz =========
   function renderQuiz(phaseKey, mountId) {
@@ -140,13 +210,19 @@
 
     const bank = bankMap[phaseKey];
     if (!Array.isArray(bank) || bank.length === 0) {
-      mount.innerHTML = `<p class="msg">⚠️ No hay preguntas cargadas para ${phaseKey}. Revisa js/datos.js.</p>`;
+      mount.innerHTML = `<p class="msg">⚠️ No hay preguntas cargadas para ${phaseKey}. Revisa js/data.js.</p>`;
       return;
     }
 
+    ensurePhaseShuffles(phaseKey);
+    const phaseShuffle = quizShuffles[phaseKey];
+
     mount.innerHTML = bank
       .map((item, qi) => {
-        const opts = item.options
+        const shuffled = phaseShuffle?.[qi];
+        const optionsToUse = shuffled?.options || item.options;
+
+        const opts = optionsToUse
           .map((opt, oi) => {
             const name = `${phaseKey}_q${qi}`;
             const id = `${name}_o${oi}`;
@@ -173,10 +249,14 @@
     const bank = bankMap[phaseKey];
     if (!Array.isArray(bank) || bank.length === 0) return { ok: 0, total: 0, pct: 0 };
 
+    ensurePhaseShuffles(phaseKey);
+    const phaseShuffle = quizShuffles[phaseKey];
+
     let ok = 0;
     bank.forEach((item, qi) => {
       const sel = document.querySelector(`input[name="${phaseKey}_q${qi}"]:checked`);
-      if (sel && Number(sel.value) === item.answerIndex) ok++;
+      const correct = phaseShuffle?.[qi]?.correctIndex ?? item.answerIndex;
+      if (sel && Number(sel.value) === correct) ok++;
     });
 
     const total = bank.length;
@@ -248,7 +328,7 @@
   const p5Submit = document.getElementById("p5SubmitQuiz");
   if (p5Submit) p5Submit.addEventListener("click", () => handleSubmit("phase5", "p5QuizResult"));
 
-  // ========= Verificación docente REAL (puerta-del-profesor.js) =========
+  // ========= Verificación docente REAL =========
   function setMsg(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
@@ -262,9 +342,12 @@
     const unlockedToday = window.TeacherGate?.isUnlocked?.(phaseKey) === true;
     state.verified[phaseKey] = unlockedToday;
 
-    if (submit) submit.disabled = !unlockedToday;
+    if (submit) {
+      if (phaseNum === 5) submit.disabled = !unlockedToday || !activitiesDone();
+      else submit.disabled = !unlockedToday;
+    }
 
-    if (lockMsg) {
+    if (lockMsg && phaseNum !== 5) {
       lockMsg.textContent = unlockedToday
         ? ""
         : "Test bloqueado. Introduce el código del docente para habilitar la corrección.";
@@ -304,7 +387,6 @@
       refreshUI();
     });
 
-    // Estado inicial
     applyGateState(phaseNum);
   }
 
@@ -322,7 +404,7 @@
     refreshUI();
   });
 
-  // ========= Certificado (botón PDF) =========
+  // ========= Certificado =========
   function canGenerateCertificate() {
     const passedAll = state.passed.phase1 && state.passed.phase2 && state.passed.phase3 && state.passed.phase4 && state.passed.phase5;
     const verifiedAll = state.verified.phase2 && state.verified.phase3 && state.verified.phase4 && state.verified.phase5;
@@ -353,12 +435,168 @@
     });
   }
 
+  // ========= Actividades Fase 5 (montaje) =========
+  function mountAct1() {
+    const mount = document.getElementById("p5Act1");
+    if (!mount) return;
+
+    const correctOrder = [
+      "Saludo e identificación",
+      "Motivo de la llamada (escucha activa)",
+      "Confirmación de datos / acuerdos",
+      "Cierre: resumen + despedida"
+    ];
+
+    if (!actState.act1Items) {
+      actState.act1Items = shuffleArray(correctOrder);
+      saveActs();
+    }
+
+    function render() {
+      mount.innerHTML = actState.act1Items.map((t, i) => `
+        <div style="display:flex; gap:8px; align-items:center; margin:6px 0; padding:10px; border:1px solid rgba(255,255,255,.10); border-radius:10px;">
+          <div style="flex:1;">${i + 1}. ${t}</div>
+          <button data-move="up" data-i="${i}">↑</button>
+          <button data-move="down" data-i="${i}">↓</button>
+        </div>
+      `).join("");
+
+      mount.querySelectorAll("button[data-move]").forEach(btn => {
+        btn.addEventListener("click", () => {
+          const i = Number(btn.dataset.i);
+          const dir = btn.dataset.move;
+          const arr = actState.act1Items;
+          const j = dir === "up" ? i - 1 : i + 1;
+          if (j < 0 || j >= arr.length) return;
+          [arr[i], arr[j]] = [arr[j], arr[i]];
+          saveActs();
+          render();
+          refreshUI();
+        });
+      });
+    }
+
+    render();
+
+    const checkBtn = document.getElementById("p5Act1Check");
+    const msg = document.getElementById("p5Act1Msg");
+    if (checkBtn) {
+      checkBtn.addEventListener("click", () => {
+        const ok = actState.act1Items.join("|") === correctOrder.join("|");
+        actState.a1 = ok;
+        saveActs();
+        if (msg) msg.textContent = ok ? "✅ Actividad 1 correcta." : "❌ Aún no. Revisa el orden.";
+        refreshUI();
+      });
+    }
+  }
+
+  function mountAct2() {
+    const mount = document.getElementById("p5Act2");
+    if (!mount) return;
+
+    const pairs = [
+      ["Escucha activa", "Reformular y confirmar lo entendido"],
+      ["Transferencia", "Derivar explicando motivo y destino"],
+      ["Cierre de llamada", "Resumen + próximos pasos + despedida"]
+    ];
+
+    if (!actState.act2) {
+      actState.act2 = {};
+      saveActs();
+    }
+
+    const definitions = shuffleArray(pairs.map(p => p[1]));
+
+    mount.innerHTML = pairs.map(([term]) => `
+      <div style="margin:8px 0; padding:10px; border:1px solid rgba(255,255,255,.10); border-radius:10px;">
+        <strong>${term}</strong><br/>
+        <select data-term="${term}" style="margin-top:8px; padding:8px; border-radius:8px;">
+          <option value="">-- Elige definición --</option>
+          ${definitions.map(d => `<option value="${d}">${d}</option>`).join("")}
+        </select>
+      </div>
+    `).join("");
+
+    mount.querySelectorAll("select").forEach(sel => {
+      const term = sel.dataset.term;
+      sel.value = actState.act2[term] || "";
+      sel.addEventListener("change", () => {
+        actState.act2[term] = sel.value;
+        saveActs();
+        refreshUI();
+      });
+    });
+
+    const checkBtn = document.getElementById("p5Act2Check");
+    const msg = document.getElementById("p5Act2Msg");
+    if (checkBtn) {
+      checkBtn.addEventListener("click", () => {
+        const ok = pairs.every(([term, def]) => (actState.act2?.[term] || "") === def);
+        actState.a2 = ok;
+        saveActs();
+        if (msg) msg.textContent = ok ? "✅ Actividad 2 correcta." : "❌ Hay emparejamientos incorrectos.";
+        refreshUI();
+      });
+    }
+  }
+
+  function mountAct3() {
+    const mount = document.getElementById("p5Act3");
+    if (!mount) return;
+
+    const q = {
+      text: "Un cliente está molesto porque no le devolvieron la llamada. ¿Cuál es la mejor respuesta inicial?",
+      options: [
+        "No es mi culpa, tendría que haber insistido.",
+        "Entiendo la situación, disculpe la molestia. Voy a revisar el caso y le digo los siguientes pasos.",
+        "Si está enfadado, mejor llame otro día.",
+        "Eso lo lleva otro departamento, adiós."
+      ],
+      correct: 1
+    };
+
+    if (actState.act3Sel === undefined) actState.act3Sel = null;
+
+    mount.innerHTML = `
+      <div style="margin:8px 0; padding:12px; border:1px solid rgba(255,255,255,.10); border-radius:10px;">
+        <p><strong>${q.text}</strong></p>
+        ${q.options.map((opt, i) => `
+          <label style="display:block; margin:.35rem 0;">
+            <input type="radio" name="p5act3" value="${i}" ${String(actState.act3Sel) === String(i) ? "checked" : ""}>
+            ${opt}
+          </label>
+        `).join("")}
+      </div>
+    `;
+
+    mount.querySelectorAll('input[name="p5act3"]').forEach(r => {
+      r.addEventListener("change", () => {
+        actState.act3Sel = Number(r.value);
+        saveActs();
+        refreshUI();
+      });
+    });
+
+    const checkBtn = document.getElementById("p5Act3Check");
+    const msg = document.getElementById("p5Act3Msg");
+    if (checkBtn) {
+      checkBtn.addEventListener("click", () => {
+        const ok = Number(actState.act3Sel) === q.correct;
+        actState.a3 = ok;
+        saveActs();
+        if (msg) msg.textContent = ok ? "✅ Actividad 3 correcta." : "❌ No es la mejor respuesta profesional.";
+        refreshUI();
+      });
+    }
+  }
+
+  // Montar actividades fase 5
+  mountAct1();
+  mountAct2();
+  mountAct3();
+
   // ========= Arranque =========
   refreshUI();
   showView("home");
 })();
-
-
-
-
- 
