@@ -5,17 +5,18 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Unidad 3 · Comunicación telefónica (FP GS)</title>
 
-  <link rel="stylesheet" href="css/styles.css" />
+  <!-- OJO: tu carpeta es "CSS" (mayúsculas) y el archivo "styles.css" -->
+  <link rel="stylesheet" href="CSS/styles.css" />
   <link rel="icon" href="data:,">
 
   <!-- jsPDF -->
   <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
 
-  <!-- App scripts (orden IMPORTANTE) -->
-  <script src="js/data.js" defer></script>
-  <script src="js/teacher-gate.js" defer></script>
-  <script src="js/certificate.js" defer></script>
-  <script src="js/app.js" defer></script>
+  <!-- Scripts (orden IMPORTANTE, con tus nombres reales) -->
+  <script src="js/datos.js" defer></script>
+  <script src="js/puerta-del-profesor.js" defer></script>
+  <script src="js/certificado.js" defer></script>
+  <script src="js/aplicación.js" defer></script>
 </head>
 
 <body>
@@ -33,6 +34,7 @@
       <p id="phase2Badge">FASE 2: bloqueada</p>
       <p id="phase3Badge">FASE 3: bloqueada</p>
       <p id="phase4Badge">FASE 4: bloqueada</p>
+      <p id="phase5Badge">FASE 5: bloqueada</p>
 
       <div style="margin-top:12px;">
         <button class="tab" data-view="home">Inicio</button>
@@ -40,6 +42,7 @@
         <button class="tab" data-view="phase2" id="phase2Tab" disabled>Fase 2</button>
         <button class="tab" data-view="phase3" id="phase3Tab" disabled>Fase 3</button>
         <button class="tab" data-view="phase4" id="phase4Tab" disabled>Fase 4</button>
+        <button class="tab" data-view="phase5" id="phase5Tab" disabled>Fase 5</button>
         <button class="tab" data-view="certificate" id="certTab" disabled>Certificado</button>
       </div>
     </div>
@@ -54,7 +57,17 @@
         <li>El docente verifica y te da un código para desbloquear el test de la fase.</li>
         <li>Aprueba el test (mínimo 80%).</li>
       </ol>
-      <button id="startPhase1Btn">Empezar Fase 1</button>
+
+      <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:12px;">
+        <button id="startPhase1Btn">Empezar Fase 1</button>
+        <button id="resetProgressBtn" title="Borra el progreso guardado en este navegador">
+          🔄 Reiniciar progreso
+        </button>
+      </div>
+
+      <p class="msg" style="margin-top:10px; opacity:.85;">
+        Nota: el progreso se guarda en el navegador. Si estás probando como docente, usa “Reiniciar progreso” o modo incógnito.
+      </p>
     </section>
 
     <section id="view-phase1" class="hidden">
@@ -126,14 +139,33 @@
       <p id="p4TestLockMsg" class="msg"></p>
     </section>
 
+    <!-- ✅ FASE 5 -->
+    <section id="view-phase5" class="hidden">
+      <h2>FASE 5 · Evaluación integradora (interactiva)</h2>
+      <p><strong>Entrega obligatoria en EVAGD:</strong> completa la actividad integradora indicada por el docente.</p>
+
+      <div class="teacher-gate">
+        <h3>Verificación del docente (obligatoria)</h3>
+        <p>Sube tu evidencia en EVAGD. Cuando el docente verifique, te facilitará un código para desbloquear el test final.</p>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <input id="p5CodeInput" type="text" maxlength="6" placeholder="Código (6 caracteres)">
+          <button id="p5VerifyBtn">Validar</button>
+        </div>
+        <p id="p5GateMsg" class="msg"></p>
+      </div>
+
+      <div id="p5Quiz"></div>
+      <button id="p5SubmitQuiz" disabled>Corregir</button>
+      <div id="p5QuizResult"></div>
+      <p id="p5TestLockMsg" class="msg"></p>
+    </section>
+
     <section id="view-certificate" class="hidden">
       <h2>Certificado</h2>
       <p>El certificado incluye: nombre, unidad, resultado (%) y fecha.</p>
       <p><strong>Requisito:</strong> fases completadas + verificación docente + nota mínima.</p>
-      <button id="downloadCertBtn">Descargar PDF</button>
+      <button id="downloadCertBtn" disabled>Descargar PDF</button>
     </section>
   </main>
 </body>
 </html>
-
-
