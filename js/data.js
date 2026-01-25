@@ -1,9 +1,8 @@
-// js/data.js
+// js/datos.js
 // Datos de la unidad y bancos de preguntas (SOLO DATOS, sin lógica).
-// El motor (render/nota/desbloqueos) debe estar en app.js.
+// El motor (render/nota/desbloqueos) está en js/aplicación.js
 
 window.UNIT_NAME = "Unidad 3 · Comunicación telefónica";
-
 
 /**
  * Formato:
@@ -154,9 +153,45 @@ const phase4Bank = [
   { q:"En comunicación escrita, la cortesía se muestra con…", options:["Ordenar sin más","Por favor / gracias / tono respetuoso","Sarcasmo","Exclamaciones"], answerIndex:1 },
   { q:"Un mensaje interno correcto evita…", options:["Datos verificables","Ambigüedad (¿qué hay que hacer?)","Referencia","Acción"], answerIndex:1 }
 ];
+
+// =====================
+// FASE 5 (30) · EVALUACIÓN INTEGRADORA TEMA 3
+// =====================
+const phase5Bank = [
+  { q:"Una empresa llama a un cliente dos días después de una venta para confirmar que el pedido llegó correctamente. ¿Qué tipo de llamada es?", options:["Inicial entrante","De seguimiento saliente","De mejora entrante","De retorno saliente"], answerIndex:1 },
+  { q:"Un cliente llama porque dejó una consulta la semana pasada y no obtuvo respuesta. ¿Cómo clasificarías principalmente la llamada?", options:["Inicial entrante","De retorno entrante","De seguimiento saliente","De mejora entrante"], answerIndex:1 },
+  { q:"La empresa llama para ofrecer información adicional sobre un servicio complementario tras detectar una necesidad del cliente. ¿Qué tipo es?", options:["De mejora saliente","De retorno saliente","Inicial entrante","De seguimiento entrante"], answerIndex:0 },
+  { q:"Una llamada 'inicial' se caracteriza por…", options:["Confirmar un compromiso posterior a una venta","Establecer contacto con alguien con quien no se había hablado antes","Devolver una llamada perdida","Responder a consultas anteriores"], answerIndex:1 },
+  { q:"En atención telefónica, si el interlocutor habla despacio y parece inseguro, la actuación más profesional es…", options:["Aumentar el volumen y mantener tu ritmo para mostrar autoridad","Adaptar el ritmo, usar frases cortas y comprobar comprensión","Repetir literalmente el mensaje para evitar malentendidos","Usar tecnicismos para transmitir precisión"], answerIndex:1 },
+  { q:"En comunicación telefónica, al no haber comunicación no verbal visible, cobran especial importancia…", options:["El contacto visual y la distancia interpersonal","La entonación, pausas, vocalización y ritmo","Los gestos con las manos","La indumentaria del emisor"], answerIndex:1 },
+  { q:"¿Qué combinación describe mejor un buen control de la voz en llamada profesional?", options:["Volumen alto + velocidad alta para demostrar seguridad","Volumen moderado + ritmo comprensible + pausas adecuadas","Volumen bajo para parecer prudente + hablar rápido","Evitar pausas para no cortar el flujo"], answerIndex:1 },
+  { q:"Si dejas un mensaje en contestador, debería incluir…", options:["Solo tu nombre, para no dar demasiada información","Nombre, número de teléfono y motivo de forma breve y clara","Solo el motivo, evitando datos de contacto","Un mensaje largo y detallado para evitar devoluciones"], answerIndex:1 },
+  { q:"Estás atendiendo presencialmente a una persona y entra una llamada. El protocolo recomienda…", options:["Ignorar la llamada hasta terminar, sin más","Pedir permiso, responder brevemente y gestionar la espera","Priorizar siempre la llamada entrante y cortar la atención presencial","Responder y continuar hablando con la persona presente a la vez"], answerIndex:1 },
+  { q:"Al poner a alguien en espera, lo correcto es…", options:["Poner en espera sin avisar para ahorrar tiempo","Pedir permiso y estimar el tiempo de espera","Decir 'espere' y dejarlo sin más","Poner música alta para que no se impaciente"], answerIndex:1 },
+  { q:"En una incidencia/queja por teléfono, el primer paso adecuado es…", options:["Justificarte inmediatamente para evitar responsabilidad","Escuchar, mantener la calma y mostrar empatía","Cortar para consultar al responsable","Pedir al cliente que envíe un email y colgar"], answerIndex:1 },
+  { q:"En la recogida y transmisión de información de una incidencia, conviene registrar…", options:["Solo el motivo general","Nombre/empresa/departamento/teléfono, motivo detallado, fecha/hora y receptor","Solo la fecha/hora y el nombre del cliente","Únicamente la urgencia para priorizar"], answerIndex:1 },
+  { q:"¿Qué es un error frecuente en protocolo telefónico con asuntos delicados?", options:["Verificar identidad antes de dar datos","Evitar tratar por teléfono temas confidenciales si no es imprescindible","Tomar nota para seguimiento","Tratar datos sensibles sin comprobar con quién hablas"], answerIndex:3 },
+  { q:"Si te piden hablar con un superior jerárquico, lo más correcto es…", options:["Pasar la llamada siempre sin preguntar","Valorar el asunto y, si procede, preguntar disponibilidad o tomar recado","Negarte siempre por norma","Dar el móvil personal del superior"], answerIndex:1 },
+  { q:"Una centralita telefónica sirve principalmente para…", options:["Bloquear llamadas externas por defecto","Conectar extensiones internas y gestionar/derivar llamadas","Sustituir el correo electrónico","Grabar automáticamente todas las llamadas por norma"], answerIndex:1 },
+  { q:"Frente a un operador automático, una ventaja del operador persona física suele ser…", options:["Configura el operador y evalúa el tráfico","Puede aportar un trato personal y orientar mejor según contexto","Automatiza el sistema de atención","Adapta la centralita al tamaño de la empresa"], answerIndex:1 },
+  { q:"En una centralita, si el destinatario no está disponible, una respuesta profesional es…", options:["'No está, llame luego' (y colgar)","Disculparse, indicar que está ocupado y ofrecer tomar nota/devolver la llamada","Transferir al azar a otra extensión","Inventar una excusa para quitarse la llamada"], answerIndex:1 },
+  { q:"¿Qué función adicional permite enviar una llamada a otro número para atender fuera de la oficina?", options:["Restricción de llamadas","Desvío de llamadas","Gestión de listas negras","Registro y listados de llamadas"], answerIndex:1 },
+  { q:"¿Qué función adicional es útil para identificar llamadas de números desconocidos o consultar historial?", options:["Registro y listados de llamadas","Desvío de llamadas","Lista negra","Llamada en espera"], answerIndex:0 },
+  { q:"Si quieres impedir el acceso a la empresa desde determinados números, usarías…", options:["Lista negra","Desvío de llamadas","Registro de llamadas","Sala de conferencias"], answerIndex:0 },
+  { q:"Antes de una videoconferencia, es recomendable…", options:["Conectarse directamente y ajustar durante la reunión","Probar equipo (audio/cámara), conocer la plataforma y preparar agenda","Evitar agenda para ser flexible","Poner fondo con movimiento para parecer cercano"], answerIndex:1 },
+  { q:"En videoconferencia, cuidar el fondo es importante porque…", options:["Solo afecta a la estética, no a la comunicación","Evita distracciones y protege la privacidad","Mejora la velocidad de internet","Permite hablar más rápido"], answerIndex:1 },
+  { q:"Durante la videoconferencia, una buena práctica con el micrófono es…", options:["Mantenerlo siempre activo para intervenir rápido","Silenciarlo cuando no se habla para evitar ruidos","Apagarlo siempre y escribir por chat","Hablar muy alto para que se oiga por encima"], answerIndex:1 },
+  { q:"Durante la videoconferencia, mantener contacto visual significa…", options:["Mirar siempre al chat","Mirar a la cámara al intervenir para que parezca que miras al interlocutor","Mirar al teclado para escribir notas","No mirar a la cámara para parecer natural"], answerIndex:1 },
+  { q:"Si hay participantes que no se conocen, al inicio es recomendable…", options:["Entrar directamente en el tema","Hacer presentaciones breves","Evitar presentaciones para ahorrar tiempo","Pedir a cada uno que envíe su CV por chat"], answerIndex:1 },
+  { q:"En videoconferencia, una postura adecuada suele ser…", options:["De pie y caminando para energía","Sentado con postura profesional, evitando movimientos que distraigan","Reclinado para parecer relajado","Cambiar de posición constantemente"], answerIndex:1 },
+  { q:"Si durante una llamada hay interferencias o mala comunicación, lo profesional es…", options:["Seguir sin decir nada","Indicarlo y pedir repetir/confirmar información","Culpar al interlocutor","Colgar y esperar a que te llamen"], answerIndex:1 },
+  { q:"En una llamada saliente profesional, al inicio conviene…", options:["Pedir directamente lo que quieres sin presentarte","Presentarte (nombre y empresa) y preguntar si es buen momento","Hablar rápido para no molestar","Entrar en detalles antes de confirmar disponibilidad"], answerIndex:1 },
+  { q:"Una llamada entrante suele ser…", options:["Siempre comercial","Contestación a consultas hechas con anterioridad (o contacto iniciado por el cliente)","Siempre de seguimiento posterior a venta","Solo entre departamentos internos"], answerIndex:1 },
+  { q:"Al cerrar una llamada profesional, es recomendable…", options:["Colgar sin resumen para ahorrar tiempo","Resumir acuerdos, confirmar próximos pasos y despedirse cordialmente","Cambiar el tema para relajar","Pedir datos personales no relacionados"], answerIndex:1 }
+];
+
 window.phase1Bank = phase1Bank;
 window.phase2Bank = phase2Bank;
 window.phase3Bank = phase3Bank;
 window.phase4Bank = phase4Bank;
-
-
+window.phase5Bank = phase5Bank;
