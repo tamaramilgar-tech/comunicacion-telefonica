@@ -1,7 +1,7 @@
-// js/app.js
+// js/aplicación.js
 (() => {
   "use strict";
-  console.log("CARGANDO js/app.js OK");
+  console.log("CARGANDO js/aplicación.js OK");
 
   // ========= Vistas =========
   const views = {
@@ -10,6 +10,7 @@
     phase2: document.getElementById("view-phase2"),
     phase3: document.getElementById("view-phase3"),
     phase4: document.getElementById("view-phase4"),
+    phase5: document.getElementById("view-phase5"),
     certificate: document.getElementById("view-certificate"),
   };
 
@@ -19,13 +20,13 @@
   }
 
   // ========= Estado / Progreso =========
-  const KEY = "u3_tel_progress_v4";
+  const KEY = "u3_tel_progress_v5_es";
 
   const defaultState = {
-    unlocked: { phase1: true, phase2: false, phase3: false, phase4: false, certificate: false },
-    verified: { phase2: false, phase3: false, phase4: false }, // verificación docente
-    passed: { phase1: false, phase2: false, phase3: false, phase4: false }, // aprobado >=80
-    scores: { phase1: 0, phase2: 0, phase3: 0, phase4: 0 }, // %
+    unlocked: { phase1: true, phase2: false, phase3: false, phase4: false, phase5: false, certificate: false },
+    verified: { phase2: false, phase3: false, phase4: false, phase5: false }, // verificación docente
+    passed: { phase1: false, phase2: false, phase3: false, phase4: false, phase5: false }, // aprobado >=80
+    scores: { phase1: 0, phase2: 0, phase3: 0, phase4: 0, phase5: 0 }, // %
   };
 
   const state = (() => {
@@ -65,16 +66,18 @@
       else if (v === "phase2") btn.disabled = !state.unlocked.phase2;
       else if (v === "phase3") btn.disabled = !state.unlocked.phase3;
       else if (v === "phase4") btn.disabled = !state.unlocked.phase4;
+      else if (v === "phase5") btn.disabled = !state.unlocked.phase5;
       else if (v === "certificate") btn.disabled = !state.unlocked.certificate;
     });
 
-    // Badges: completada = aprobada
+    // Badges
     setBadge("phase1Badge", state.passed.phase1 ? "FASE 1: completada" : "FASE 1: pendiente");
     setBadge("phase2Badge", state.passed.phase2 ? "FASE 2: completada" : "FASE 2: bloqueada");
     setBadge("phase3Badge", state.passed.phase3 ? "FASE 3: completada" : "FASE 3: bloqueada");
     setBadge("phase4Badge", state.passed.phase4 ? "FASE 4: completada" : "FASE 4: bloqueada");
+    setBadge("phase5Badge", state.passed.phase5 ? "FASE 5: completada" : "FASE 5: bloqueada");
 
-    // Botones corregir: fase 2-4 solo si verificado docente
+    // Botones corregir: fase 2-5 solo si verificado docente
     const p2Submit = document.getElementById("p2SubmitQuiz");
     if (p2Submit) p2Submit.disabled = !state.verified.phase2;
 
@@ -83,6 +86,9 @@
 
     const p4Submit = document.getElementById("p4SubmitQuiz");
     if (p4Submit) p4Submit.disabled = !state.verified.phase4;
+
+    const p5Submit = document.getElementById("p5SubmitQuiz");
+    if (p5Submit) p5Submit.disabled = !state.verified.phase5;
 
     // Certificado
     const certTab = document.getElementById("certTab");
@@ -102,12 +108,29 @@
   const startBtn = document.getElementById("startPhase1Btn");
   if (startBtn) startBtn.addEventListener("click", () => showView("phase1"));
 
+  // ========= Botón Reiniciar progreso =========
+  const resetBtn = document.getElementById("resetProgressBtn");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      const ok = confirm("¿Reiniciar progreso de esta unidad en ESTE navegador? (No afecta a otros dispositivos)");
+      if (!ok) return;
+
+      // Borra progreso de esta unidad + desbloqueos del docente del día (TeacherGate)
+      Object.keys(localStorage)
+        .filter(k => k.includes("u3_tel_progress") || k.startsWith("teacher_unlock_") || k.toLowerCase().includes("teachergate"))
+        .forEach(k => localStorage.removeItem(k));
+
+      location.reload();
+    });
+  }
+
   // ========= Bancos de preguntas =========
   const bankMap = {
     phase1: window.phase1Bank,
     phase2: window.phase2Bank,
     phase3: window.phase3Bank,
     phase4: window.phase4Bank,
+    phase5: window.phase5Bank,
   };
 
   // ========= Render de Quiz =========
@@ -117,7 +140,7 @@
 
     const bank = bankMap[phaseKey];
     if (!Array.isArray(bank) || bank.length === 0) {
-      mount.innerHTML = `<p class="msg">⚠️ No hay preguntas cargadas para ${phaseKey}. Revisa js/data.js.</p>`;
+      mount.innerHTML = `<p class="msg">⚠️ No hay preguntas cargadas para ${phaseKey}. Revisa js/datos.js.</p>`;
       return;
     }
 
@@ -170,14 +193,16 @@
     if (phaseKey === "phase1") state.unlocked.phase2 = true;
     if (phaseKey === "phase2") state.unlocked.phase3 = true;
     if (phaseKey === "phase3") state.unlocked.phase4 = true;
-    if (phaseKey === "phase4") state.unlocked.certificate = true;
+    if (phaseKey === "phase4") state.unlocked.phase5 = true;
+    if (phaseKey === "phase5") state.unlocked.certificate = true;
   }
 
   function nextViewOf(phaseKey) {
     if (phaseKey === "phase1") return "phase2";
     if (phaseKey === "phase2") return "phase3";
     if (phaseKey === "phase3") return "phase4";
-    if (phaseKey === "phase4") return "certificate";
+    if (phaseKey === "phase4") return "phase5";
+    if (phaseKey === "phase5") return "certificate";
     return "home";
   }
 
@@ -205,6 +230,7 @@
   renderQuiz("phase2", "p2Quiz");
   renderQuiz("phase3", "p3Quiz");
   renderQuiz("phase4", "p4Quiz");
+  renderQuiz("phase5", "p5Quiz");
 
   // Submit buttons
   const p1Submit = document.getElementById("p1SubmitQuiz");
@@ -219,7 +245,10 @@
   const p4Submit = document.getElementById("p4SubmitQuiz");
   if (p4Submit) p4Submit.addEventListener("click", () => handleSubmit("phase4", "p4QuizResult"));
 
-  // ========= Verificación docente REAL (teacher-gate.js) =========
+  const p5Submit = document.getElementById("p5SubmitQuiz");
+  if (p5Submit) p5Submit.addEventListener("click", () => handleSubmit("phase5", "p5QuizResult"));
+
+  // ========= Verificación docente REAL (puerta-del-profesor.js) =========
   function setMsg(id, text) {
     const el = document.getElementById(id);
     if (el) el.textContent = text;
@@ -282,21 +311,30 @@
   wireGate(2);
   wireGate(3);
   wireGate(4);
+  wireGate(5);
 
   window.addEventListener("teacherGateUpdated", () => {
     applyGateState(2);
     applyGateState(3);
     applyGateState(4);
+    applyGateState(5);
     save();
     refreshUI();
   });
 
   // ========= Certificado (botón PDF) =========
+  function canGenerateCertificate() {
+    const passedAll = state.passed.phase1 && state.passed.phase2 && state.passed.phase3 && state.passed.phase4 && state.passed.phase5;
+    const verifiedAll = state.verified.phase2 && state.verified.phase3 && state.verified.phase4 && state.verified.phase5;
+    return passedAll && verifiedAll && state.unlocked.certificate;
+  }
+
   const downloadCertBtnEl = document.getElementById("downloadCertBtn");
   if (downloadCertBtnEl) {
     downloadCertBtnEl.addEventListener("click", () => {
-      if (!state.unlocked.certificate || !state.passed.phase4) {
+      if (!canGenerateCertificate()) {
         alert("Certificado bloqueado: debes completar todas las fases (mínimo 80%) y verificación docente.");
+        refreshUI();
         return;
       }
 
@@ -310,6 +348,7 @@
         resultP2: state.scores.phase2,
         resultP3: state.scores.phase3,
         resultP4: state.scores.phase4,
+        resultP5: state.scores.phase5,
       });
     });
   }
@@ -318,7 +357,6 @@
   refreshUI();
   showView("home");
 })();
-
 
 
 
